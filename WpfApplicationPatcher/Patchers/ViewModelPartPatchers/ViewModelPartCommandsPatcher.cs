@@ -1,33 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Reflection;
-using log4net;
 using Mono.Cecil;
-using WpfApplicationPatcher.Extensions;
+using WpfApplicationPatcher.AssemblyTypes;
 using WpfApplicationPatcher.Helpers;
+using WpfApplicationPatcher.Types.Enums;
 
-namespace WpfApplicationPatcher.Patchers.ViewModelPatchers {
-	public class ViewModelCommandsPatcher : IViewModelPatcher {
-		private readonly ILog log;
+namespace WpfApplicationPatcher.Patchers.ViewModelPartPatchers {
+	public class ViewModelPartCommandsPatcher : IViewModelPartPatcher {
+		private readonly Log log;
 
-		public ViewModelCommandsPatcher() {
-			log = Log.For(this);
+		public ViewModelPartCommandsPatcher() {
+			log = Log.For(this, 2);
 		}
 
-		public void Patch(ModuleDefinition module, TypeDefinition viewModelBaseType, TypeDefinition viewModelType) {
-			log.Info($"Patching {viewModelType.FullName} commands...");
+		public void Patch(AssemblyDefinition monoCecilAssembly, AssemblyType viewModelBaseAssemblyType, AssemblyType viewModelAssemblyType, ViewModelPatchingType viewModelPatchingType) {
+			log.Info($"Patching {viewModelAssemblyType.FullName} commands...");
 
 			var commandsMembers = new Dictionary<string, CommandMembers>();
 
-			var properties = viewModelType.Properties
-				.Select(property => new { Property = property, PropertyType = property.PropertyType.Resolve() })
-				.Where(x =>
-					x.Property.CustomAttributes.NotContains(TypeNames.NotPatchingPropertyAttribute) && (
-						x.PropertyType.CustomAttributes.Contains(TypeNames.PatchingPropertyAttribute) ||
-						x.PropertyType.Is(TypeNames.ICommand) || x.PropertyType.Is(TypeNames.RelayCommand)))
-				.Select(x => x.Property)
-				.ToArray();
+			//var properties = viewModelAssemblyType.TypeDefinition.Properties
+			//	.Select(property => new { Property = property, PropertyType = property.PropertyType.Resolve() })
+			//	.Where(x =>
+			//		x.Property.CustomAttributes.NotContains(TypeNames.NotPatchingPropertyAttribute) && (
+			//			x.PropertyType.CustomAttributes.Contains(TypeNames.PatchingPropertyAttribute) ||
+			//			x.PropertyType.Is(TypeNames.ICommand) || x.PropertyType.Is(TypeNames.RelayCommand)))
+			//	.Select(x => x.Property)
+			//	.ToArray();
 
 			//foreach (var propertyInfo in viewModelBaseType.Properties.Where(propertyInfo => propertyInfo.PropertyType == commandPropertyType)) {
 			//	const string commandPropertyNameEndsWith = "Command";

@@ -1,13 +1,13 @@
-﻿using log4net;
+﻿using System.Linq;
 using Mono.Cecil;
+using WpfApplicationPatcher.AssemblyTypes;
 using WpfApplicationPatcher.Extensions;
 using WpfApplicationPatcher.Helpers;
-using WpfApplicationPatcher.Patchers;
 
 namespace WpfApplicationPatcher {
 	public class WpfApplicationPatcherProcessor {
 		private readonly IPatcher[] patchers;
-		private readonly ILog log;
+		private readonly Log log;
 
 		public WpfApplicationPatcherProcessor(IPatcher[] patchers) {
 			this.patchers = patchers;
@@ -16,21 +16,22 @@ namespace WpfApplicationPatcher {
 
 		public void PatchApplication(string wpfApplicationPath) {
 			log.Info("Reading assembly...");
-			var assembly = AssemblyDefinition.ReadAssembly(wpfApplicationPath, new ReaderParameters { ReadSymbols = true });
+			var reflectionAssembly = ReflectionAssembly.Load(wpfApplicationPath);
+			var monoCecilAssembly = AssemblyDefinition.ReadAssembly(wpfApplicationPath, new ReaderParameters { ReadSymbols = true });
 			log.Info("Assembly was readed");
 
-			var module = assembly.MainModule;
+			log.Info("Building assembly container...");
+			var assemblyContainer = AssemblyContainerBuilder.Build(reflectionAssembly, monoCecilAssembly);
+			log.Info("Assembly container was built");
 
-			log.Info("Building tree...");
-			var tree = module.Types.ToTree();
-			log.Info("Tree was built");
+			log.Debug("Types found:", assemblyContainer.AssemblyTypes.Select(assemblyType => assemblyType.FullName));
 
 			log.Info("Patching application...");
-			patchers.ForEach(patcher => patcher.Patch(module, tree));
+			patchers.ForEach(patcher => patcher.Patch(monoCecilAssembly, assemblyContainer));
 			log.Info("Application was patched");
 
 			log.Info("Write assembly...");
-			assembly.Write(wpfApplicationPath, new WriterParameters { WriteSymbols = true });
+			monoCecilAssembly.Write(wpfApplicationPath, new WriterParameters { WriteSymbols = true });
 			log.Info("Assembly was recorded");
 		}
 	}

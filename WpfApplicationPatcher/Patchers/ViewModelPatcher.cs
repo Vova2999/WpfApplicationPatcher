@@ -1,32 +1,41 @@
 ﻿using System.Linq;
-using log4net;
+using GalaSoft.MvvmLight;
 using Mono.Cecil;
+using WpfApplicationPatcher.AssemblyTypes;
 using WpfApplicationPatcher.Extensions;
 using WpfApplicationPatcher.Helpers;
-using WpfApplicationPatcher.Patchers.ViewModelPatchers;
-using WpfApplicationPatcher.TypesTree;
+using WpfApplicationPatcher.Types.Attributes.Classes;
+using WpfApplicationPatcher.Types.Enums;
 
 namespace WpfApplicationPatcher.Patchers {
 	public class ViewModelPatcher : IPatcher {
-		private readonly IViewModelPatcher[] viewModelPatchers;
-		private readonly ILog log;
+		private readonly IViewModelPartPatcher[] viewModelPartPatchers;
+		private readonly Log log;
 
-		public ViewModelPatcher(IViewModelPatcher[] viewModelPatchers) {
-			this.viewModelPatchers = viewModelPatchers;
-			log = Log.For(this);
+		public ViewModelPatcher(IViewModelPartPatcher[] viewModelPartPatchers) {
+			this.viewModelPartPatchers = viewModelPartPatchers;
+			log = Log.For(this, 1);
 		}
 
-		public void Patch(ModuleDefinition module, TypeDefinitionsTree tree) {
+		public void Patch(AssemblyDefinition monoCecilAssembly, AssemblyContainer assemblyContainer) {
 			log.Info("Patching view models...");
 
-			var viewModelBaseType = tree.GetTypeByName(TypeNames.ViewModelBase);
-			var viewModelTypes = tree.GetAllInheritanceTypes(viewModelBaseType).WhereFrom(module).ToArray();
-			log.Debug($"View models found:\r\n{string.Join("\r\n", viewModelTypes.Select((viewModelType, index) => $"\t{index + 1}) {viewModelType.FullName}"))}");
+			var viewModelBaseAssemblyType = assemblyContainer.GetAssemblyTypeByReflectionType(typeof(ViewModelBase)).Load();
+			var viewModelAssemblyTypes = assemblyContainer.GetInheritanceAssemblyTypes(viewModelBaseAssemblyType)
+				.WhereFrom(monoCecilAssembly.MainModule)
+				.Select(viewModelAssemblyType => viewModelAssemblyType.Load())
+				.ToArray();
+			log.Debug("Types found:", viewModelAssemblyTypes.Select(viewModelType => viewModelType.FullName));
 
-			foreach (var viewModelType in viewModelTypes) {
-				log.Info($"Patching {viewModelType.FullName}...");
-				viewModelPatchers.ForEach(viewModelPatcher => viewModelPatcher.Patch(module, viewModelBaseType, viewModelType));
-				log.Info($"{viewModelType.FullName} was patched");
+			foreach (var viewModelAssemblyType in viewModelAssemblyTypes) {
+				log.Info($"Patching {viewModelAssemblyType.FullName}...");
+
+				var patchingViewModelAttribute = viewModelAssemblyType.GetReflectionAttribute<PatchingViewModelAttribute>();
+				var viewModelPatchingType = patchingViewModelAttribute?.ViewModelPatchingType ?? ViewModelPatchingType.All;
+				log.Info($"View model patching type: {viewModelPatchingType}");
+
+				viewModelPartPatchers.ForEach(viewModelPatcher => viewModelPatcher.Patch(monoCecilAssembly, viewModelBaseAssemblyType, viewModelAssemblyType, viewModelPatchingType));
+				log.Info($"{viewModelAssemblyType.FullName} was patched");
 			}
 
 			log.Info("View models was patched");

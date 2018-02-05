@@ -82,18 +82,23 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Extensions\CustomAttributeExtensions.cs" />
+    <Compile Include="AssemblyTypes\AssemblyAttributeType.cs" />
+    <Compile Include="AssemblyTypes\AssemblyMethodType.cs" />
+    <Compile Include="AssemblyTypes\AssemblyPropertyType.cs" />
+    <Compile Include="AssemblyTypes\ReflectionAssembly.cs" />
+    <Compile Include="AssemblyTypes\AssemblyContainer.cs" />
+    <Compile Include="AssemblyTypes\AssemblyType.cs" />
+    <Compile Include="AssemblyTypes\AssemblyContainerBuilder.cs" />
+    <Compile Include="Extensions\AssemblyAttributeTypeExtensions.cs" />
+    <Compile Include="Extensions\AssemblyPropertyTypeExtensions.cs" />
+    <Compile Include="Extensions\AssemblyTypeExtensions.cs" />
     <Compile Include="Extensions\EnumerableExtensions.cs" />
-    <Compile Include="Extensions\TypeDefinitionExtensions.cs" />
-    <Compile Include="Extensions\TypeReferenceExtensions.cs" />
     <Compile Include="Helpers\Log.cs" />
-    <Compile Include="Helpers\TypeNames.cs" />
-    <Compile Include="Patchers\IPatcher.cs" />
+    <Compile Include="IPatcher.cs" />
     <Compile Include="Patchers\ViewModelPatcher.cs" />
-    <Compile Include="Patchers\ViewModelPatchers\IViewModelPatcher.cs" />
-    <Compile Include="Patchers\ViewModelPatchers\ViewModelCommandsPatcher.cs" />
-    <Compile Include="Patchers\ViewModelPatchers\ViewModelPropertiesPatcher.cs" />
-    <Compile Include="TypesTree\TypeDefinitionsTree.cs" />
+    <Compile Include="Patchers\IViewModelPartPatcher.cs" />
+    <Compile Include="Patchers\ViewModelPartPatchers\ViewModelPartCommandsPatcher.cs" />
+    <Compile Include="Patchers\ViewModelPartPatchers\ViewModelPartPropertiesPatcher.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WpfApplicationPatcherNinjectModule.cs" />

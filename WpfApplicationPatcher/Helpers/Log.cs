@@ -1,13 +1,108 @@
-﻿using log4net;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Reflection;
+using log4net;
+using log4net.Core;
 
 namespace WpfApplicationPatcher.Helpers {
-	public static class Log {
-		public static ILog For(string typeName) {
-			return LogManager.GetLogger(typeName);
+	// ReSharper disable MemberCanBePrivate.Global
+	// ReSharper disable UnusedMember.Global
+	// ReSharper disable UnusedParameter.Global
+
+	public class Log {
+		public int Offset { get; set; }
+		private static string OffsetValue {
+			get => (string)GlobalContext.Properties["Offset"];
+			set => GlobalContext.Properties["Offset"] = value;
 		}
 
-		public static ILog For<TObject>(TObject obj) {
-			return LogManager.GetLogger(typeof(TObject));
+		private readonly ILogger logger;
+
+		private Log(ILogger logger, int offset) {
+			this.logger = logger;
+			Offset = offset;
+		}
+
+		public static Log For<TObject>(TObject obj, int offset = 0) {
+			return new Log(LoggerManager.GetLogger(Assembly.GetExecutingAssembly(), typeof(TObject)), offset);
+		}
+
+		public void Debug(string message) {
+			SetOffsetAndExecuteLog(Level.Debug, ConvertMultiline(message));
+		}
+		public void Debug(Exception exception) {
+			SetOffsetAndExecuteLog(Level.Debug, null, exception);
+		}
+		public void Debug(object message, Exception exception) {
+			SetOffsetAndExecuteLog(Level.Debug, ConvertMultiline(message), exception);
+		}
+		public void Debug(string message, IEnumerable<string> messages) {
+			SetOffsetAndExecuteLog(Level.Debug, JoinMultiline(message, messages));
+		}
+
+		public void Info(string message) {
+			SetOffsetAndExecuteLog(Level.Info, ConvertMultiline(message));
+		}
+		public void Info(Exception exception) {
+			SetOffsetAndExecuteLog(Level.Info, null, exception);
+		}
+		public void Info(object message, Exception exception) {
+			SetOffsetAndExecuteLog(Level.Info, ConvertMultiline(message), exception);
+		}
+		public void Info(string message, IEnumerable<string> messages) {
+			SetOffsetAndExecuteLog(Level.Info, JoinMultiline(message, messages));
+		}
+
+		public void Warn(string message) {
+			SetOffsetAndExecuteLog(Level.Warn, ConvertMultiline(message));
+		}
+		public void Warn(Exception exception) {
+			SetOffsetAndExecuteLog(Level.Warn, null, exception);
+		}
+		public void Warn(object message, Exception exception) {
+			SetOffsetAndExecuteLog(Level.Warn, ConvertMultiline(message), exception);
+		}
+		public void Warn(string message, IEnumerable<string> messages) {
+			SetOffsetAndExecuteLog(Level.Warn, JoinMultiline(message, messages));
+		}
+
+		public void Error(string message) {
+			SetOffsetAndExecuteLog(Level.Error, ConvertMultiline(message));
+		}
+		public void Error(Exception exception) {
+			SetOffsetAndExecuteLog(Level.Error, null, exception);
+		}
+		public void Error(object message, Exception exception) {
+			SetOffsetAndExecuteLog(Level.Error, ConvertMultiline(message), exception);
+		}
+		public void Error(string message, IEnumerable<string> messages) {
+			SetOffsetAndExecuteLog(Level.Error, JoinMultiline(message, messages));
+		}
+
+		public void Fatal(string message) {
+			SetOffsetAndExecuteLog(Level.Fatal, ConvertMultiline(message));
+		}
+		public void Fatal(Exception exception) {
+			SetOffsetAndExecuteLog(Level.Fatal, null, exception);
+		}
+		public void Fatal(object message, Exception exception) {
+			SetOffsetAndExecuteLog(Level.Fatal, ConvertMultiline(message), exception);
+		}
+		public void Fatal(string message, IEnumerable<string> messages) {
+			SetOffsetAndExecuteLog(Level.Fatal, JoinMultiline(message, messages));
+		}
+
+		private void SetOffsetAndExecuteLog(Level level, string message, Exception exception = null) {
+			OffsetValue = new string('\t', Offset);
+			logger.Log(new StackTrace().GetFrame(0).GetMethod().DeclaringType, level, message, exception);
+		}
+		private static string ConvertMultiline(object message) {
+			return message.ToString().Replace("\n", $"\r\n{OffsetValue}");
+		}
+		private static string JoinMultiline(string message, IEnumerable<string> messages) {
+			return ConvertMultiline(string.Join("\n", new[] { message }.Concat(messages.Select((m, i) => $"  {i + 1}) {m}"))));
 		}
 	}
 }
