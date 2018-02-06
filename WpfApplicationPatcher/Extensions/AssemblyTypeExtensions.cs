@@ -6,6 +6,14 @@ using WpfApplicationPatcher.AssemblyTypes;
 
 namespace WpfApplicationPatcher.Extensions {
 	public static class AssemblyTypeExtensions {
+		public static bool Is(this AssemblyType assemblyType, Type reflectionType) {
+			return reflectionType.IsAssignableFrom(assemblyType.ReflectionType);
+		}
+
+		public static bool IsNot(this AssemblyType assemblyType, Type reflectionType) {
+			return !assemblyType.Is(reflectionType);
+		}
+
 		public static IEnumerable<AssemblyType> WhereFrom(this IEnumerable<AssemblyType> assemblyTypes, ModuleDefinition module) {
 			return assemblyTypes.Where(assemblyType => assemblyType.MonoCecilType.Module == module);
 		}

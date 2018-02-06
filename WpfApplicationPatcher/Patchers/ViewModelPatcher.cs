@@ -4,7 +4,7 @@ using Mono.Cecil;
 using WpfApplicationPatcher.AssemblyTypes;
 using WpfApplicationPatcher.Extensions;
 using WpfApplicationPatcher.Helpers;
-using WpfApplicationPatcher.Types.Attributes.Classes;
+using WpfApplicationPatcher.Types.Attributes.ViewModels;
 using WpfApplicationPatcher.Types.Enums;
 
 namespace WpfApplicationPatcher.Patchers {
@@ -22,14 +22,12 @@ namespace WpfApplicationPatcher.Patchers {
 			log.Info("Patching view models...");
 
 			var viewModelBaseAssemblyType = assemblyContainer.GetAssemblyTypeByReflectionType(typeof(ViewModelBase)).Load();
-			var viewModelAssemblyTypes = assemblyContainer.GetInheritanceAssemblyTypes(viewModelBaseAssemblyType)
-				.WhereFrom(monoCecilAssembly.MainModule)
-				.Select(viewModelAssemblyType => viewModelAssemblyType.Load())
-				.ToArray();
+			var viewModelAssemblyTypes = assemblyContainer.GetInheritanceAssemblyTypes(viewModelBaseAssemblyType).WhereFrom(monoCecilAssembly.MainModule).ToArray();
 			log.Debug("View models found:", viewModelAssemblyTypes.Select(viewModelType => viewModelType.FullName));
 
 			foreach (var viewModelAssemblyType in viewModelAssemblyTypes) {
 				log.Info($"Patching {viewModelAssemblyType.FullName}...");
+				viewModelAssemblyType.Load();
 
 				var patchingViewModelAttribute = viewModelAssemblyType.GetReflectionAttribute<PatchingViewModelAttribute>();
 				var viewModelPatchingType = patchingViewModelAttribute?.ViewModelPatchingType ?? ViewModelPatchingType.All;

@@ -34,12 +34,14 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Attributes\Methods\NotPatchingToCommandAttribute.cs" />
+    <Compile Include="Attributes\Commands\Properties\CombineWithMethod.cs" />
+    <Compile Include="Attributes\Commands\Properties\NotCombineWithMethod.cs" />
+    <Compile Include="Attributes\Commands\Methods\NotPatchingToCommandAttribute.cs" />
     <Compile Include="Enums\CommandMethodType.cs" />
-    <Compile Include="Attributes\Methods\PatchingToCommand.cs" />
+    <Compile Include="Attributes\Commands\Methods\PatchingToCommand.cs" />
     <Compile Include="Attributes\Properties\NotPatchingPropertyAttribute.cs" />
     <Compile Include="Attributes\Properties\PatchingPropertyAttribute.cs" />
-    <Compile Include="Attributes\Classes\PatchingViewModelAttribute.cs" />
+    <Compile Include="Attributes\ViewModels\PatchingViewModelAttribute.cs" />
     <Compile Include="Enums\ViewModelPatchingType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

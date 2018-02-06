@@ -1,8 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
+using System.Windows.Input;
 using Mono.Cecil;
 using WpfApplicationPatcher.AssemblyTypes;
+using WpfApplicationPatcher.Extensions;
 using WpfApplicationPatcher.Helpers;
+using WpfApplicationPatcher.Types.Attributes.Properties;
 using WpfApplicationPatcher.Types.Enums;
 
 namespace WpfApplicationPatcher.Patchers.ViewModelPartPatchers {
@@ -17,7 +22,8 @@ namespace WpfApplicationPatcher.Patchers.ViewModelPartPatchers {
 		public void Patch(AssemblyDefinition monoCecilAssembly, AssemblyType viewModelBaseAssemblyType, AssemblyType viewModelAssemblyType, ViewModelPatchingType viewModelPatchingType) {
 			log.Info($"Patching {viewModelAssemblyType.FullName} commands...");
 
-			var commandsMembers = new Dictionary<string, CommandMembers>();
+			var viewModelCommandProperties = GetViewModelCommandProperties(viewModelAssemblyType, viewModelPatchingType);
+			//var commandsMembers = new Dictionary<string, CommandMembers>();
 
 			//var properties = viewModelAssemblyType.TypeDefinition.Properties
 			//	.Select(property => new { Property = property, PropertyType = property.PropertyType.Resolve() })
@@ -41,6 +47,25 @@ namespace WpfApplicationPatcher.Patchers.ViewModelPartPatchers {
 			//	else
 			//		commandsMembers.Add(name, new CommandMembers { CommandPropertyInfo = propertyInfo });
 			//}
+		}
+
+		[DoNotAddLogOffset]
+		private AssemblyPropertyType[] GetViewModelCommandProperties(AssemblyType viewModelAssemblyType, ViewModelPatchingType viewModelPatchingType) {
+			switch (viewModelPatchingType) {
+				case ViewModelPatchingType.All:
+					return viewModelAssemblyType.Properties
+						.Where(assemblyPropertyType =>
+							assemblyPropertyType.Attributes.NotContains(typeof(NotPatchingPropertyAttribute)) &&
+							(assemblyPropertyType.Attributes.Contains(typeof(PatchingPropertyAttribute)) || assemblyPropertyType.Is(typeof(ICommand))))
+						.ToArray();
+				case ViewModelPatchingType.Selectively:
+					return viewModelAssemblyType.Properties
+						.Where(assemblyPropertyType => assemblyPropertyType.Attributes.Contains(typeof(PatchingPropertyAttribute)))
+						.ToArray();
+				default:
+					log.Error($"Not implement patching for properties with {nameof(ViewModelPatchingType)} = {viewModelPatchingType}");
+					throw new ArgumentOutOfRangeException(nameof(viewModelPatchingType), viewModelPatchingType, null);
+			}
 		}
 
 		private class CommandMembers {

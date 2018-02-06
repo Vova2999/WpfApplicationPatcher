@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using WpfApplicationPatcher.Extensions;
 
 namespace WpfApplicationPatcher.AssemblyTypes {
 	public class AssemblyContainer {
@@ -15,12 +16,12 @@ namespace WpfApplicationPatcher.AssemblyTypes {
 				?? throw new ArgumentException($"Not found type '{reflectionType.FullName}'");
 		}
 
-		public IEnumerable<AssemblyType> GetInheritanceAssemblyTypes(Type reflectionType) {
-			return AssemblyTypes.Where(assemblyType => reflectionType.IsAssignableFrom(assemblyType.ReflectionType));
-		}
-
 		public IEnumerable<AssemblyType> GetInheritanceAssemblyTypes(AssemblyType assemblyType) {
 			return GetInheritanceAssemblyTypes(assemblyType.ReflectionType);
+		}
+
+		public IEnumerable<AssemblyType> GetInheritanceAssemblyTypes(Type reflectionType) {
+			return AssemblyTypes.Where(assemblyType => assemblyType.Is(reflectionType));
 		}
 	}
 }

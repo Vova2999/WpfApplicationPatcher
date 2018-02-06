@@ -53,10 +53,10 @@ namespace WpfApplicationPatcher.Patchers.ViewModelPartPatchers {
 		}
 
 		private void PatchProprty(AssemblyDefinition monoCecilAssembly, AssemblyType viewModelBaseAssemblyType, AssemblyType viewModelAssemblyType, AssemblyPropertyType assemblyPropertyType) {
+			CheckProperty(assemblyPropertyType);
+
 			var propertyName = assemblyPropertyType.MonoCecilProperty.Name;
 			log.Debug($"Property name: {propertyName}");
-
-			CheckPropertyName(propertyName);
 
 			var backgroundFieldName = $"{char.ToLower(propertyName.First())}{propertyName.Substring(1)}";
 			log.Debug($"Background field name: {backgroundFieldName}");
@@ -76,8 +76,13 @@ namespace WpfApplicationPatcher.Patchers.ViewModelPartPatchers {
 		}
 
 		[DoNotAddLogOffset]
-		private void CheckPropertyName(string propertyName) {
-			if (char.IsUpper(propertyName.First()))
+		private void CheckProperty(AssemblyPropertyType assemblyPropertyType) {
+			if (assemblyPropertyType.Is(typeof(ICommand))) {
+				log.Error("Patching property type cannot be inherited from ICommand");
+				throw new Exception("Internal error of property patching");
+			}
+
+			if (char.IsUpper(assemblyPropertyType.MonoCecilProperty.Name.First()))
 				return;
 
 			log.Error("First character of property name must be to upper case");
