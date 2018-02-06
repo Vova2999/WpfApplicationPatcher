@@ -14,6 +14,7 @@ namespace WpfApplicationPatcher {
 			log = Log.For(this);
 		}
 
+		[DoNotAddLogOffset]
 		public void PatchApplication(string wpfApplicationPath) {
 			log.Info("Reading assembly...");
 			var reflectionAssembly = ReflectionAssembly.Load(wpfApplicationPath);

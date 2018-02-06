@@ -18,6 +18,7 @@ namespace WpfApplicationPatcher {
 			}
 		}
 
+		[DoNotAddLogOffset]
 		private static void Run(string[] args) {
 			if (!args.Any())
 				throw new ArgumentException("You must specify path to wpf application");

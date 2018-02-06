@@ -14,9 +14,10 @@ namespace WpfApplicationPatcher.Patchers {
 
 		public ViewModelPatcher(IViewModelPartPatcher[] viewModelPartPatchers) {
 			this.viewModelPartPatchers = viewModelPartPatchers;
-			log = Log.For(this, 1);
+			log = Log.For(this);
 		}
 
+		[DoNotAddLogOffset]
 		public void Patch(AssemblyDefinition monoCecilAssembly, AssemblyContainer assemblyContainer) {
 			log.Info("Patching view models...");
 
@@ -25,7 +26,7 @@ namespace WpfApplicationPatcher.Patchers {
 				.WhereFrom(monoCecilAssembly.MainModule)
 				.Select(viewModelAssemblyType => viewModelAssemblyType.Load())
 				.ToArray();
-			log.Debug("Types found:", viewModelAssemblyTypes.Select(viewModelType => viewModelType.FullName));
+			log.Debug("View models found:", viewModelAssemblyTypes.Select(viewModelType => viewModelType.FullName));
 
 			foreach (var viewModelAssemblyType in viewModelAssemblyTypes) {
 				log.Info($"Patching {viewModelAssemblyType.FullName}...");

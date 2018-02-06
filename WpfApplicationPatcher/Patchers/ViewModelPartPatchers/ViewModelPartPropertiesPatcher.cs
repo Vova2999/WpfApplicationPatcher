@@ -14,19 +14,26 @@ namespace WpfApplicationPatcher.Patchers.ViewModelPartPatchers {
 		private readonly Log log;
 
 		public ViewModelPartPropertiesPatcher() {
-			log = Log.For(this, 2);
+			log = Log.For(this);
 		}
 
+		[DoNotAddLogOffset]
 		public void Patch(AssemblyDefinition monoCecilAssembly, AssemblyType viewModelBaseAssemblyType, AssemblyType viewModelAssemblyType, ViewModelPatchingType viewModelPatchingType) {
 			log.Info($"Patching {viewModelAssemblyType.FullName} properties...");
 
 			var assemblyPropertyTypes = GetViewModelProperties(viewModelAssemblyType, viewModelPatchingType);
-			log.Debug("Types found:", assemblyPropertyTypes.Select(property => property.FullName));
+			log.Debug("Properties found:", assemblyPropertyTypes.Select(property => property.FullName));
 
-			assemblyPropertyTypes.ForEach(assemblyPropertyType => PatchProprty(monoCecilAssembly, viewModelBaseAssemblyType, viewModelAssemblyType, assemblyPropertyType));
+			foreach (var assemblyPropertyType in assemblyPropertyTypes) {
+				log.Info($"Patching {assemblyPropertyType.FullName}...");
+				PatchProprty(monoCecilAssembly, viewModelBaseAssemblyType, viewModelAssemblyType, assemblyPropertyType);
+				log.Info($"{assemblyPropertyType.FullName} was patched");
+			}
+
 			log.Info($"Properties {viewModelAssemblyType.FullName} was patched");
 		}
 
+		[DoNotAddLogOffset]
 		private AssemblyPropertyType[] GetViewModelProperties(AssemblyType viewModelAssemblyType, ViewModelPatchingType viewModelPatchingType) {
 			switch (viewModelPatchingType) {
 				case ViewModelPatchingType.All:
@@ -46,9 +53,6 @@ namespace WpfApplicationPatcher.Patchers.ViewModelPartPatchers {
 		}
 
 		private void PatchProprty(AssemblyDefinition monoCecilAssembly, AssemblyType viewModelBaseAssemblyType, AssemblyType viewModelAssemblyType, AssemblyPropertyType assemblyPropertyType) {
-			log.Info($"Patching {assemblyPropertyType.FullName}...");
-
-			log.Offset = 3;
 			var propertyName = assemblyPropertyType.MonoCecilProperty.Name;
 			log.Debug($"Property name: {propertyName}");
 
@@ -69,11 +73,9 @@ namespace WpfApplicationPatcher.Patchers.ViewModelPartPatchers {
 
 			GenerateGetMethodBody(assemblyPropertyType.MonoCecilProperty, backgroundField);
 			GenerateSetMethodBody(monoCecilAssembly, viewModelBaseAssemblyType, assemblyPropertyType.MonoCecilProperty, propertyName, backgroundField);
-
-			log.Offset = 2;
-			log.Info($"{assemblyPropertyType.FullName} was patched");
 		}
 
+		[DoNotAddLogOffset]
 		private void CheckPropertyName(string propertyName) {
 			if (char.IsUpper(propertyName.First()))
 				return;
@@ -82,6 +84,7 @@ namespace WpfApplicationPatcher.Patchers.ViewModelPartPatchers {
 			throw new Exception("Internal error of property patching");
 		}
 
+		[DoNotAddLogOffset]
 		private void GenerateGetMethodBody(PropertyDefinition property, FieldDefinition backgroundField) {
 			log.Info("Generate get method body...");
 			var getMethodBodyInstructions = property.GetMethod.Body.Instructions;
@@ -92,6 +95,7 @@ namespace WpfApplicationPatcher.Patchers.ViewModelPartPatchers {
 			log.Info("Get method body was generated");
 		}
 
+		[DoNotAddLogOffset]
 		private void GenerateSetMethodBody(AssemblyDefinition monoCecilAssembly, AssemblyType viewModelBaseAssemblyType, PropertyDefinition property, string propertyName, FieldDefinition backgroundField) {
 			log.Info("Generate method reference on Set method in ViewModelBase...");
 			var methodDefinition = new GenericInstanceMethod(GetSetMethodInViewModelBase(viewModelBaseAssemblyType.MonoCecilType));

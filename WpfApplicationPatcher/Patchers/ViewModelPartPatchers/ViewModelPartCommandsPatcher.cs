@@ -10,9 +10,10 @@ namespace WpfApplicationPatcher.Patchers.ViewModelPartPatchers {
 		private readonly Log log;
 
 		public ViewModelPartCommandsPatcher() {
-			log = Log.For(this, 2);
+			log = Log.For(this);
 		}
 
+		[DoNotAddLogOffset]
 		public void Patch(AssemblyDefinition monoCecilAssembly, AssemblyType viewModelBaseAssemblyType, AssemblyType viewModelAssemblyType, ViewModelPatchingType viewModelPatchingType) {
 			log.Info($"Patching {viewModelAssemblyType.FullName} commands...");
 
