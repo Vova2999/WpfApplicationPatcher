@@ -5,7 +5,7 @@ using FluentAssertions;
 using GalaSoft.MvvmLight;
 using NUnit.Framework;
 
-namespace WpfApplicationPatcher.Tests.OnlyPropertiesTests {
+namespace WpfApplicationPatcher.Tests.Integration.OnlyPropertiesTests {
 	public class GoodViewModel : ViewModelBase {
 		public int Number { get; set; }
 		public string Line { get; set; }

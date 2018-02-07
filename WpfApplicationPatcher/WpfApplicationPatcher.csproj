@@ -87,11 +87,13 @@
     <Compile Include="AssemblyTypes\ReflectionAssembly.cs" />
     <Compile Include="AssemblyTypes\AssemblyContainer.cs" />
     <Compile Include="AssemblyTypes\AssemblyType.cs" />
-    <Compile Include="AssemblyTypes\AssemblyContainerBuilder.cs" />
     <Compile Include="Extensions\AssemblyAttributeTypeExtensions.cs" />
     <Compile Include="Extensions\AssemblyPropertyTypeExtensions.cs" />
     <Compile Include="Extensions\AssemblyTypeExtensions.cs" />
     <Compile Include="Extensions\EnumerableExtensions.cs" />
+    <Compile Include="Factories\AssemblyContainerFactory.cs" />
+    <Compile Include="Factories\AssemblyDefinitionFactory.cs" />
+    <Compile Include="Factories\ReflectionAssemblyFactory.cs" />
     <Compile Include="Helpers\Log.cs" />
     <Compile Include="IPatcher.cs" />
     <Compile Include="Patchers\ViewModelPatcher.cs" />

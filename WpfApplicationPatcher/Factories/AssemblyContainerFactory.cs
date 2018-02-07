@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Mono.Cecil;
+using WpfApplicationPatcher.AssemblyTypes;
 using WpfApplicationPatcher.Extensions;
 
-namespace WpfApplicationPatcher.AssemblyTypes {
-	public class AssemblyContainerBuilder {
-		public static AssemblyContainer Build(ReflectionAssembly reflectionAssembly, AssemblyDefinition monoCecilAssembly) {
+namespace WpfApplicationPatcher.Factories {
+	public class AssemblyContainerFactory {
+		public AssemblyContainer Create(ReflectionAssembly reflectionAssembly, AssemblyDefinition monoCecilAssembly) {
 			var allTypes = GetAllTypes(monoCecilAssembly);
 			return CreateAssemblyContainer(reflectionAssembly, allTypes);
 		}
