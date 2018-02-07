@@ -3,11 +3,12 @@ using System.Linq;
 using System.Reflection;
 using System.Windows.Input;
 using Mono.Cecil;
-using WpfApplicationPatcher.AssemblyTypes;
 using WpfApplicationPatcher.Extensions;
 using WpfApplicationPatcher.Helpers;
 using WpfApplicationPatcher.Types.Attributes.Properties;
+using WpfApplicationPatcher.Types.Common;
 using WpfApplicationPatcher.Types.Enums;
+using WpfApplicationPatcher.Types.MonoCecil;
 
 namespace WpfApplicationPatcher.Patchers.ViewModelPartPatchers {
 	public class ViewModelPartCommandsPatcher : IViewModelPartPatcher {
@@ -18,7 +19,7 @@ namespace WpfApplicationPatcher.Patchers.ViewModelPartPatchers {
 		}
 
 		[DoNotAddLogOffset]
-		public void Patch(AssemblyDefinition monoCecilAssembly, AssemblyType viewModelBaseAssemblyType, AssemblyType viewModelAssemblyType, ViewModelPatchingType viewModelPatchingType) {
+		public void Patch(MonoCecilAssembly monoCecilAssembly, CommonType viewModelBaseAssemblyType, CommonType viewModelAssemblyType, ViewModelPatchingType viewModelPatchingType) {
 			log.Info($"Patching {viewModelAssemblyType.FullName} commands...");
 
 			var viewModelCommandProperties = GetViewModelCommandProperties(viewModelAssemblyType, viewModelPatchingType);
@@ -49,7 +50,7 @@ namespace WpfApplicationPatcher.Patchers.ViewModelPartPatchers {
 		}
 
 		[DoNotAddLogOffset]
-		private AssemblyPropertyType[] GetViewModelCommandProperties(AssemblyType viewModelAssemblyType, ViewModelPatchingType viewModelPatchingType) {
+		private CommonProperty[] GetViewModelCommandProperties(CommonType viewModelAssemblyType, ViewModelPatchingType viewModelPatchingType) {
 			switch (viewModelPatchingType) {
 				case ViewModelPatchingType.All:
 					return viewModelAssemblyType.Properties

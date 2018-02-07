@@ -1,11 +1,12 @@
 ﻿using System.Linq;
 using GalaSoft.MvvmLight;
 using Mono.Cecil;
-using WpfApplicationPatcher.AssemblyTypes;
 using WpfApplicationPatcher.Extensions;
 using WpfApplicationPatcher.Helpers;
+using WpfApplicationPatcher.Types;
 using WpfApplicationPatcher.Types.Attributes.ViewModels;
 using WpfApplicationPatcher.Types.Enums;
+using WpfApplicationPatcher.Types.MonoCecil;
 
 namespace WpfApplicationPatcher.Patchers {
 	public class ViewModelPatcher : IPatcher {
@@ -18,7 +19,7 @@ namespace WpfApplicationPatcher.Patchers {
 		}
 
 		[DoNotAddLogOffset]
-		public void Patch(AssemblyDefinition monoCecilAssembly, AssemblyContainer assemblyContainer) {
+		public void Patch(MonoCecilAssembly monoCecilAssembly, CommonAssemblyContainer assemblyContainer) {
 			log.Info("Patching view models...");
 
 			var viewModelAssemblyTypes = assemblyContainer.GetInheritanceAssemblyTypes(typeof(ViewModelBase)).WhereFrom(monoCecilAssembly.MainModule).ToArray();
@@ -34,7 +35,7 @@ namespace WpfApplicationPatcher.Patchers {
 				log.Info($"Patching {viewModelAssemblyType.FullName}...");
 				viewModelAssemblyType.Load();
 
-				var patchingViewModelAttribute = viewModelAssemblyType.GetReflectionAttribute<PatchingViewModelAttribute>();
+				var patchingViewModelAttribute = viewModelAssemblyType.ReflectionType.GetReflectionAttribute<PatchingViewModelAttribute>();
 				var viewModelPatchingType = patchingViewModelAttribute?.ViewModelPatchingType ?? ViewModelPatchingType.All;
 				log.Info($"View model patching type: {viewModelPatchingType}");
 

@@ -1,27 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Mono.Cecil;
+using WpfApplicationPatcher.Types.MonoCecil;
+using WpfApplicationPatcher.Types.Reflection;
 
-namespace WpfApplicationPatcher.AssemblyTypes {
-	public class AssemblyType {
+namespace WpfApplicationPatcher.Types.Common {
+	public class CommonType {
 		public readonly string FullName;
-		public readonly Type ReflectionType;
-		public readonly TypeDefinition MonoCecilType;
+		public readonly MonoCecilType MonoCecilType;
+		public readonly ReflectionType ReflectionType;
 
 		public bool IsLoaded { get; private set; }
-		public AssemblyMethodType[] Methods { get; private set; }
-		public AssemblyPropertyType[] Properties { get; private set; }
-		public AssemblyAttributeType[] Attributes { get; private set; }
+		public CommonMethod[] Methods { get; private set; }
+		public CommonProperty[] Properties { get; private set; }
+		public CommonAttribute[] Attributes { get; private set; }
 
-		public AssemblyType(string fullName, Type reflectionType, TypeDefinition monoCecilType) {
+		public CommonType(string fullName, MonoCecilType monoCecilType, ReflectionType reflectionType) {
 			FullName = fullName;
-			ReflectionType = reflectionType;
 			MonoCecilType = monoCecilType;
+			ReflectionType = reflectionType;
 		}
 
-		public AssemblyType Load() {
+		public CommonType Load() {
 			if (IsLoaded)
 				return this;
 
@@ -35,19 +35,19 @@ namespace WpfApplicationPatcher.AssemblyTypes {
 
 		private void LoadMethods() {
 			const BindingFlags bindingFlags = BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
-			var reflectionMethods = ReflectionType.GetMethods(bindingFlags);
+			var reflectionMethods = ReflectionType.GetMethods(bindingFlags).ToArray();
 			Methods = MonoCecilType.Methods
-				.Where(method => method.Name != ".ctor" && !method.Name.StartsWith("get_") && !method.Name.StartsWith("set_"))
+				.Where(monoCecilMethod => monoCecilMethod.Name != ".ctor" && !monoCecilMethod.Name.StartsWith("get_") && !monoCecilMethod.Name.StartsWith("set_"))
 				.Select(monoCecilMethod => CreateAssemblyMethodType(monoCecilMethod, reflectionMethods))
 				.Where(assemblyMethodType => assemblyMethodType != null)
 				.ToArray();
 		}
 
-		private static AssemblyMethodType CreateAssemblyMethodType(MethodDefinition monoCecilMethod, IEnumerable<MethodInfo> reflectionMethods) {
+		private static CommonMethod CreateAssemblyMethodType(MonoCecilMethod monoCecilMethod, IEnumerable<ReflectionMethod> reflectionMethods) {
 			var reflectionMethod = reflectionMethods.FirstOrDefault(methodInfo =>
 				methodInfo.Name == monoCecilMethod.Name &&
 				methodInfo.GetParameters()
-					.Select(parameter => parameter.ParameterType.FullName)
+					.Select(reflectionParameter => reflectionParameter.ParameterType.FullName)
 					.SequenceEqual(monoCecilMethod.Parameters.Select(parameter => parameter.ParameterType.FullName)));
 
 			if (reflectionMethod == null)
@@ -55,13 +55,13 @@ namespace WpfApplicationPatcher.AssemblyTypes {
 
 			var reflectionAttributes = reflectionMethod.GetCustomAttributes();
 			var assemblyAttributeTypes = monoCecilMethod.CustomAttributes
-				.Select(attribute => new AssemblyAttributeType(
-					reflectionAttributes.FirstOrDefault(reflectionAttribute => reflectionAttribute.GetType().FullName == attribute.AttributeType.FullName),
-					attribute))
+				.Select(attribute => new CommonAttribute(
+					attribute,
+					reflectionAttributes.FirstOrDefault(reflectionAttribute => reflectionAttribute.GetType().FullName == attribute.AttributeType.FullName)))
 				.Where(assemblyAttributeType => assemblyAttributeType.ReflectionAttribute != null)
 				.ToArray();
 
-			return new AssemblyMethodType(monoCecilMethod.FullName, reflectionMethod, monoCecilMethod, assemblyAttributeTypes);
+			return new CommonMethod(monoCecilMethod.FullName, assemblyAttributeTypes, monoCecilMethod, reflectionMethod);
 		}
 
 		private void LoadProperties() {
@@ -73,7 +73,7 @@ namespace WpfApplicationPatcher.AssemblyTypes {
 				.ToArray();
 		}
 
-		private static AssemblyPropertyType CreateAssemblyPropertyType(PropertyDefinition monoCecilProperty, IEnumerable<PropertyInfo> reflectionProperties) {
+		private static CommonProperty CreateAssemblyPropertyType(MonoCecilProperty monoCecilProperty, IEnumerable<ReflectionProperty> reflectionProperties) {
 			var reflectionProperty = reflectionProperties.FirstOrDefault(propertyInfo => propertyInfo.Name == monoCecilProperty.Name);
 
 			if (reflectionProperty == null)
@@ -81,21 +81,21 @@ namespace WpfApplicationPatcher.AssemblyTypes {
 
 			var reflectionAttributes = reflectionProperty.GetCustomAttributes();
 			var assemblyAttributeTypes = monoCecilProperty.CustomAttributes
-				.Select(attribute => new AssemblyAttributeType(
-					reflectionAttributes.FirstOrDefault(reflectionAttribute => reflectionAttribute.GetType().FullName == attribute.AttributeType.FullName),
-					attribute))
+				.Select(attribute => new CommonAttribute(
+					attribute,
+					reflectionAttributes.FirstOrDefault(reflectionAttribute => reflectionAttribute.GetType().FullName == attribute.AttributeType.FullName)))
 				.Where(assemblyAttributeType => assemblyAttributeType.ReflectionAttribute != null)
 				.ToArray();
 
-			return new AssemblyPropertyType(monoCecilProperty.FullName, reflectionProperty, monoCecilProperty, assemblyAttributeTypes);
+			return new CommonProperty(monoCecilProperty.FullName, assemblyAttributeTypes, monoCecilProperty, reflectionProperty);
 		}
 
 		private void LoadAttributes() {
 			var reflectionAttributes = ReflectionType.GetCustomAttributes();
 			Attributes = MonoCecilType.CustomAttributes
-				.Select(attribute => new AssemblyAttributeType(
-					reflectionAttributes.FirstOrDefault(reflectionAttribute => reflectionAttribute.GetType().FullName == attribute.AttributeType.FullName),
-					attribute))
+				.Select(attribute => new CommonAttribute(
+					attribute,
+					reflectionAttributes.FirstOrDefault(reflectionAttribute => reflectionAttribute.GetType().FullName == attribute.AttributeType.FullName)))
 				.Where(assemblyAttributeTypes => assemblyAttributeTypes.ReflectionAttribute != null)
 				.ToArray();
 		}

@@ -2,28 +2,22 @@
 using System.Collections.Generic;
 using System.Linq;
 using Mono.Cecil;
-using WpfApplicationPatcher.AssemblyTypes;
+using WpfApplicationPatcher.Types.Common;
+using WpfApplicationPatcher.Types.MonoCecil;
+using WpfApplicationPatcher.Types.Reflection;
 
 namespace WpfApplicationPatcher.Extensions {
 	public static class AssemblyTypeExtensions {
-		public static bool Is(this AssemblyType assemblyType, Type reflectionType) {
-			return reflectionType.IsAssignableFrom(assemblyType.ReflectionType);
+		public static bool Is(this CommonType assemblyType, Type reflectionType) {
+			return reflectionType.IsAssignableFrom(assemblyType.ReflectionType.Instance);
 		}
 
-		public static bool IsNot(this AssemblyType assemblyType, Type reflectionType) {
+		public static bool IsNot(this CommonType assemblyType, Type reflectionType) {
 			return !assemblyType.Is(reflectionType);
 		}
 
-		public static IEnumerable<AssemblyType> WhereFrom(this IEnumerable<AssemblyType> assemblyTypes, ModuleDefinition module) {
+		public static IEnumerable<CommonType> WhereFrom(this IEnumerable<CommonType> assemblyTypes, MonoCecilModule module) {
 			return assemblyTypes.Where(assemblyType => assemblyType.MonoCecilType.Module == module);
-		}
-
-		public static TAttribute GetReflectionAttribute<TAttribute>(this AssemblyType assemblyType) where TAttribute : Attribute {
-			return assemblyType.Load().GetAttribute<TAttribute>()?.ReflectionAttribute as TAttribute;
-		}
-
-		public static AssemblyAttributeType GetAttribute<TAttribute>(this AssemblyType assemblyType) where TAttribute : Attribute {
-			return assemblyType.Load().Attributes.FirstOrDefault(attribute => attribute.ReflectionAttribute.GetType() == typeof(TAttribute));
 		}
 	}
 }

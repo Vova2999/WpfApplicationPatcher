@@ -3,11 +3,12 @@ using System.Linq;
 using System.Windows.Input;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
-using WpfApplicationPatcher.AssemblyTypes;
 using WpfApplicationPatcher.Extensions;
 using WpfApplicationPatcher.Helpers;
 using WpfApplicationPatcher.Types.Attributes.Properties;
+using WpfApplicationPatcher.Types.Common;
 using WpfApplicationPatcher.Types.Enums;
+using WpfApplicationPatcher.Types.MonoCecil;
 
 namespace WpfApplicationPatcher.Patchers.ViewModelPartPatchers {
 	public class ViewModelPartPropertiesPatcher : IViewModelPartPatcher {
@@ -18,7 +19,7 @@ namespace WpfApplicationPatcher.Patchers.ViewModelPartPatchers {
 		}
 
 		[DoNotAddLogOffset]
-		public void Patch(AssemblyDefinition monoCecilAssembly, AssemblyType viewModelBaseAssemblyType, AssemblyType viewModelAssemblyType, ViewModelPatchingType viewModelPatchingType) {
+		public void Patch(MonoCecilAssembly monoCecilAssembly, CommonType viewModelBaseAssemblyType, CommonType viewModelAssemblyType, ViewModelPatchingType viewModelPatchingType) {
 			log.Info($"Patching {viewModelAssemblyType.FullName} properties...");
 
 			var assemblyPropertyTypes = GetViewModelProperties(viewModelAssemblyType, viewModelPatchingType);
@@ -39,7 +40,7 @@ namespace WpfApplicationPatcher.Patchers.ViewModelPartPatchers {
 		}
 
 		[DoNotAddLogOffset]
-		private AssemblyPropertyType[] GetViewModelProperties(AssemblyType viewModelAssemblyType, ViewModelPatchingType viewModelPatchingType) {
+		private CommonProperty[] GetViewModelProperties(CommonType viewModelAssemblyType, ViewModelPatchingType viewModelPatchingType) {
 			switch (viewModelPatchingType) {
 				case ViewModelPatchingType.All:
 					return viewModelAssemblyType.Properties
@@ -57,7 +58,7 @@ namespace WpfApplicationPatcher.Patchers.ViewModelPartPatchers {
 			}
 		}
 
-		private void PatchProprty(AssemblyDefinition monoCecilAssembly, AssemblyType viewModelBaseAssemblyType, AssemblyType viewModelAssemblyType, AssemblyPropertyType assemblyPropertyType) {
+		private void PatchProprty(MonoCecilAssembly monoCecilAssembly, CommonType viewModelBaseAssemblyType, CommonType viewModelAssemblyType, CommonProperty assemblyPropertyType) {
 			CheckProperty(assemblyPropertyType);
 
 			var propertyName = assemblyPropertyType.MonoCecilProperty.Name;
@@ -69,8 +70,8 @@ namespace WpfApplicationPatcher.Patchers.ViewModelPartPatchers {
 			var backgroundField = viewModelAssemblyType.MonoCecilType.Fields.FirstOrDefault(field => field.Name == backgroundFieldName);
 
 			if (backgroundField == null) {
-				backgroundField = new FieldDefinition(backgroundFieldName, FieldAttributes.Private, assemblyPropertyType.MonoCecilProperty.PropertyType);
-				viewModelAssemblyType.MonoCecilType.Fields.Add(backgroundField);
+				backgroundField = MonoCecilField.Create(backgroundFieldName, FieldAttributes.Private, assemblyPropertyType.MonoCecilProperty.PropertyType);
+				viewModelAssemblyType.MonoCecilType.AddField(backgroundField);
 				log.Debug("Background field was created");
 			}
 			else
@@ -81,7 +82,7 @@ namespace WpfApplicationPatcher.Patchers.ViewModelPartPatchers {
 		}
 
 		[DoNotAddLogOffset]
-		private void CheckProperty(AssemblyPropertyType assemblyPropertyType) {
+		private void CheckProperty(CommonProperty assemblyPropertyType) {
 			if (assemblyPropertyType.Is(typeof(ICommand))) {
 				log.Error("Patching property type cannot be inherited from ICommand");
 				throw new Exception("Internal error of property patching");
@@ -95,41 +96,45 @@ namespace WpfApplicationPatcher.Patchers.ViewModelPartPatchers {
 		}
 
 		[DoNotAddLogOffset]
-		private void GenerateGetMethodBody(PropertyDefinition property, FieldDefinition backgroundField) {
+		private void GenerateGetMethodBody(MonoCecilProperty property, MonoCecilField backgroundField) {
 			log.Info("Generate get method body...");
 			var getMethodBodyInstructions = property.GetMethod.Body.Instructions;
 			getMethodBodyInstructions.Clear();
-			getMethodBodyInstructions.Add(Instruction.Create(OpCodes.Ldarg_0));
-			getMethodBodyInstructions.Add(Instruction.Create(OpCodes.Ldfld, backgroundField));
-			getMethodBodyInstructions.Add(Instruction.Create(OpCodes.Ret));
+			getMethodBodyInstructions.Add(MonoCecilInstruction.Create(OpCodes.Ldarg_0));
+			getMethodBodyInstructions.Add(MonoCecilInstruction.Create(OpCodes.Ldfld, backgroundField));
+			getMethodBodyInstructions.Add(MonoCecilInstruction.Create(OpCodes.Ret));
 			log.Info("Get method body was generated");
 		}
 
 		[DoNotAddLogOffset]
-		private void GenerateSetMethodBody(AssemblyDefinition monoCecilAssembly, AssemblyType viewModelBaseAssemblyType, PropertyDefinition property, string propertyName, FieldDefinition backgroundField) {
+		private void GenerateSetMethodBody(MonoCecilAssembly monoCecilAssembly, CommonType viewModelBaseAssemblyType, MonoCecilProperty property, string propertyName, MonoCecilField backgroundField) {
 			log.Info("Generate method reference on Set method in ViewModelBase...");
-			var methodDefinition = new GenericInstanceMethod(GetSetMethodInViewModelBase(viewModelBaseAssemblyType.MonoCecilType));
-			methodDefinition.GenericArguments.Add(property.PropertyType);
-			var setMethodInViewModelBaseWithGenericParameter = monoCecilAssembly.MainModule.Import(methodDefinition);
+			//var methodDefinition = new GenericInstanceMethod(GetSetMethodInViewModelBase(viewModelBaseAssemblyType.MonoCecilType).Instance);
+			var monoCecilGenericInstanceMethod = MonoCecilGenericInstanceMethod.Create(GetSetMethodInViewModelBase(viewModelBaseAssemblyType.MonoCecilType));
+			monoCecilGenericInstanceMethod.AddGenericArgument(property.PropertyType);
+			//methodDefinition.GenericArguments.Add(property.PropertyType.Instance);
+			var setMethodInViewModelBaseWithGenericParameter = monoCecilAssembly.MainModule.Import(monoCecilGenericInstanceMethod);
+			//var setMethodInViewModelBaseWithGenericParameter = monoCecilAssembly.MainModule.Instance.Import(methodDefinition);
 			log.Info("Method reference was generated");
 
 			log.Info("Generate set method body...");
 			var setMethodBodyInstructions = property.SetMethod.Body.Instructions;
 			setMethodBodyInstructions.Clear();
-			setMethodBodyInstructions.Add(Instruction.Create(OpCodes.Ldarg_0));
-			setMethodBodyInstructions.Add(Instruction.Create(OpCodes.Ldstr, propertyName));
-			setMethodBodyInstructions.Add(Instruction.Create(OpCodes.Ldarg_0));
-			setMethodBodyInstructions.Add(Instruction.Create(OpCodes.Ldflda, backgroundField));
-			setMethodBodyInstructions.Add(Instruction.Create(OpCodes.Ldarg_1));
-			setMethodBodyInstructions.Add(Instruction.Create(OpCodes.Ldc_I4_0));
-			setMethodBodyInstructions.Add(Instruction.Create(OpCodes.Call, setMethodInViewModelBaseWithGenericParameter));
-			setMethodBodyInstructions.Add(Instruction.Create(OpCodes.Pop));
-			setMethodBodyInstructions.Add(Instruction.Create(OpCodes.Ret));
+			setMethodBodyInstructions.Add(MonoCecilInstruction.Create(OpCodes.Ldarg_0));
+			setMethodBodyInstructions.Add(MonoCecilInstruction.Create(OpCodes.Ldstr, propertyName));
+			setMethodBodyInstructions.Add(MonoCecilInstruction.Create(OpCodes.Ldarg_0));
+			setMethodBodyInstructions.Add(MonoCecilInstruction.Create(OpCodes.Ldflda, backgroundField));
+			setMethodBodyInstructions.Add(MonoCecilInstruction.Create(OpCodes.Ldarg_1));
+			setMethodBodyInstructions.Add(MonoCecilInstruction.Create(OpCodes.Ldc_I4_0));
+			setMethodBodyInstructions.Add(MonoCecilInstruction.Create(OpCodes.Call, setMethodInViewModelBaseWithGenericParameter));
+			//setMethodBodyInstructions.Instance.Add(Instruction.Create(OpCodes.Call, setMethodInViewModelBaseWithGenericParameter));
+			setMethodBodyInstructions.Add(MonoCecilInstruction.Create(OpCodes.Pop));
+			setMethodBodyInstructions.Add(MonoCecilInstruction.Create(OpCodes.Ret));
 			log.Info("Set method body was generated");
 		}
 
-		private static MethodReference setMethodInViewModelBase;
-		private static MethodReference GetSetMethodInViewModelBase(TypeDefinition viewModelBaseType) {
+		private static MonoCecilMethod setMethodInViewModelBase;
+		private static MonoCecilMethod GetSetMethodInViewModelBase(MonoCecilType viewModelBaseType) {
 			return setMethodInViewModelBase ?? (setMethodInViewModelBase =
 				viewModelBaseType.Methods.Single(method =>
 					method.Name == "Set" &&

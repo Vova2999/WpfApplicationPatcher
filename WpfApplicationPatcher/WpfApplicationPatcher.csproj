@@ -81,12 +81,29 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AssemblyTypes\AssemblyAttributeType.cs" />
-    <Compile Include="AssemblyTypes\AssemblyMethodType.cs" />
-    <Compile Include="AssemblyTypes\AssemblyPropertyType.cs" />
-    <Compile Include="AssemblyTypes\ReflectionAssembly.cs" />
-    <Compile Include="AssemblyTypes\AssemblyContainer.cs" />
-    <Compile Include="AssemblyTypes\AssemblyType.cs" />
+    <Compile Include="Extensions\ToMonoCecilObjectExtensions.cs" />
+    <Compile Include="Extensions\ToReflectionObjectExtensions.cs" />
+    <Compile Include="Types\Base\ObjectBase.cs" />
+    <Compile Include="Types\Common\CommonAttribute.cs" />
+    <Compile Include="Types\Common\CommonMethod.cs" />
+    <Compile Include="Types\Common\CommonProperty.cs" />
+    <Compile Include="Types\MonoCecil\MonoCecilAssembly.cs" />
+    <Compile Include="Types\MonoCecil\MonoCecilAttribute.cs" />
+    <Compile Include="Types\MonoCecil\MonoCecilField.cs" />
+    <Compile Include="Types\MonoCecil\MonoCecilGenericInstanceMethod.cs" />
+    <Compile Include="Types\MonoCecil\MonoCecilInstruction.cs" />
+    <Compile Include="Types\MonoCecil\MonoCecilInstructions.cs" />
+    <Compile Include="Types\MonoCecil\MonoCecilMethod.cs" />
+    <Compile Include="Types\MonoCecil\MonoCecilMethodBody.cs" />
+    <Compile Include="Types\MonoCecil\MonoCecilMethodReference.cs" />
+    <Compile Include="Types\MonoCecil\MonoCecilModule.cs" />
+    <Compile Include="Types\MonoCecil\MonoCecilParameter.cs" />
+    <Compile Include="Types\MonoCecil\MonoCecilProperty.cs" />
+    <Compile Include="Types\MonoCecil\MonoCecilType.cs" />
+    <Compile Include="Types\MonoCecil\MonoCecilTypeReference.cs" />
+    <Compile Include="Types\Reflection\ReflectionAssembly.cs" />
+    <Compile Include="Types\CommonAssemblyContainer.cs" />
+    <Compile Include="Types\Common\CommonType.cs" />
     <Compile Include="Extensions\AssemblyAttributeTypeExtensions.cs" />
     <Compile Include="Extensions\AssemblyPropertyTypeExtensions.cs" />
     <Compile Include="Extensions\AssemblyTypeExtensions.cs" />
@@ -102,6 +119,11 @@
     <Compile Include="Patchers\ViewModelPartPatchers\ViewModelPartPropertiesPatcher.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Types\Reflection\ReflectionAttribute.cs" />
+    <Compile Include="Types\Reflection\ReflectionMethod.cs" />
+    <Compile Include="Types\Reflection\ReflectionParameter.cs" />
+    <Compile Include="Types\Reflection\ReflectionProperty.cs" />
+    <Compile Include="Types\Reflection\ReflectionType.cs" />
     <Compile Include="WpfApplicationPatcherNinjectModule.cs" />
     <Compile Include="WpfApplicationPatcherProcessor.cs" />
   </ItemGroup>

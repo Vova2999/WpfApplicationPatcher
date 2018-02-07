@@ -1,8 +1,9 @@
 ﻿using Mono.Cecil;
-using WpfApplicationPatcher.AssemblyTypes;
+using WpfApplicationPatcher.Types;
+using WpfApplicationPatcher.Types.MonoCecil;
 
 namespace WpfApplicationPatcher {
 	public interface IPatcher {
-		void Patch(AssemblyDefinition monoCecilAssembly, AssemblyContainer assemblyContainer);
+		void Patch(MonoCecilAssembly monoCecilAssembly, CommonAssemblyContainer assemblyContainer);
 	}
 }

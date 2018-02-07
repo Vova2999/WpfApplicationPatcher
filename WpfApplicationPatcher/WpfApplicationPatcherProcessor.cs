@@ -33,7 +33,7 @@ namespace WpfApplicationPatcher {
 			var assemblyContainer = assemblyContainerFactory.Create(reflectionAssembly, monoCecilAssembly);
 			log.Info("Assembly container was built");
 
-			log.Debug("Types found:", assemblyContainer.AssemblyTypes.Select(assemblyType => assemblyType.FullName));
+			log.Debug("Types found:", assemblyContainer.CommonAssemblyTypes.Select(assemblyType => assemblyType.FullName));
 
 			log.Info("Patching application...");
 			patchers.ForEach(patcher => patcher.Patch(monoCecilAssembly, assemblyContainer));

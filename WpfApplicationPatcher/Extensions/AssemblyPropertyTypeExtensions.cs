@@ -1,13 +1,13 @@
 ﻿using System;
-using WpfApplicationPatcher.AssemblyTypes;
+using WpfApplicationPatcher.Types.Common;
 
 namespace WpfApplicationPatcher.Extensions {
 	public static class AssemblyPropertyTypeExtensions {
-		public static bool Is(this AssemblyPropertyType assemblyPropertyType, Type propertyType) {
+		public static bool Is(this CommonProperty assemblyPropertyType, Type propertyType) {
 			return propertyType.IsAssignableFrom(assemblyPropertyType.ReflectionProperty.PropertyType);
 		}
 
-		public static bool IsNot(this AssemblyPropertyType assemblyPropertyType, Type propertyType) {
+		public static bool IsNot(this CommonProperty assemblyPropertyType, Type propertyType) {
 			return !assemblyPropertyType.Is(propertyType);
 		}
 	}

@@ -3,11 +3,13 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using JetBrains.Annotations;
-using WpfApplicationPatcher.AssemblyTypes;
+using WpfApplicationPatcher.Extensions;
+using WpfApplicationPatcher.Types.Reflection;
+using Assembly = System.Reflection.Assembly;
 
 namespace WpfApplicationPatcher.Factories {
 	public class ReflectionAssemblyFactory {
-		public ReflectionAssembly Craete([NotNull] string assemblyPath) {
+		public virtual ReflectionAssembly Craete([NotNull] string assemblyPath) {
 			var symbolStorePath = Path.ChangeExtension(assemblyPath, "pdb");
 
 			var rawAssembly = File.ReadAllBytes(assemblyPath);
@@ -23,8 +25,8 @@ namespace WpfApplicationPatcher.Factories {
 
 			AppDomain.CurrentDomain.AssemblyResolve += (sender, args) =>
 				foundedAssemblyFiles.TryGetValue(new AssemblyName(args.Name).Name, out var assemblyFile) ? Assembly.Load(File.ReadAllBytes(assemblyFile)) : null;
-
-			return new ReflectionAssembly(mainAssembly, mainAssembly.GetReferencedAssemblies().Select(Assembly.Load).ToArray());
+			
+			return new[] { mainAssembly }.Concat(mainAssembly.GetReferencedAssemblies().Select(Assembly.Load)).ToReflectionAssembly();
 		}
 	}
 }
