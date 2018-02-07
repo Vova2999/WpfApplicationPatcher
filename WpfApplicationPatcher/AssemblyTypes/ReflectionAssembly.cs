@@ -24,7 +24,14 @@ namespace WpfApplicationPatcher.AssemblyTypes {
 			var mainAssembly = Assembly.Load(rawAssembly, rawSymbolStore);
 			File.WriteAllBytes(symbolStorePath, rawSymbolStore);
 
-			return new ReflectionAssembly(mainAssembly, mainAssembly.GetReferencedAssemblies().Select(name => Assembly.Load(name)).ToArray());
+			var foundedAssemblyFiles = Directory.GetFiles(Directory.GetCurrentDirectory())
+				.GroupBy(Path.GetFileNameWithoutExtension)
+				.ToDictionary(group => group.Key, group => group.SingleOrDefault(path => Path.GetExtension(path) == ".exe" || Path.GetExtension(path) == ".dll"));
+
+			AppDomain.CurrentDomain.AssemblyResolve += (sender, args) =>
+				foundedAssemblyFiles.TryGetValue(new AssemblyName(args.Name).Name, out var assemblyFile) ? Assembly.Load(File.ReadAllBytes(assemblyFile)) : null;
+
+			return new ReflectionAssembly(mainAssembly, mainAssembly.GetReferencedAssemblies().Select(Assembly.Load).ToArray());
 		}
 
 		public Type GetReflectionTypeByName(string typeFullName) {

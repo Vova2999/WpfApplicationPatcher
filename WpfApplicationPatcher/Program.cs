@@ -34,7 +34,10 @@ namespace WpfApplicationPatcher {
 					$"Available extensions: {string.Join(", ", availableExtensions.Select(availableExtension => $"'{availableExtension}'"))}");
 
 			log.Info("Application was found");
-			Directory.SetCurrentDirectory(Path.GetDirectoryName(wpfApplicationPath) ?? throw new Exception());
+
+			var currentDirectory = Path.GetDirectoryName(Path.GetFullPath(wpfApplicationPath));
+			log.Info($"Current directory: {currentDirectory}");
+			Directory.SetCurrentDirectory(currentDirectory ?? throw new Exception());
 
 			var container = new StandardKernel(new WpfApplicationPatcherNinjectModule());
 			var processor = container.Get<WpfApplicationPatcherProcessor>();

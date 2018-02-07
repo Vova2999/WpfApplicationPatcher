@@ -31,6 +31,8 @@ namespace WpfApplicationPatcher.AssemblyTypes {
 			return new AssemblyContainer(allTypes
 				.Select(type => new AssemblyType(type.FullName, reflectionAssembly.GetReflectionTypeByName(type.FullName), type))
 				.Where(assemblyType => assemblyType.ReflectionType != null)
+				.OrderBy(assemblyType => assemblyType.FullName.Length)
+				.ThenBy(assemblyType => assemblyType.FullName)
 				.ToArray());
 		}
 	}

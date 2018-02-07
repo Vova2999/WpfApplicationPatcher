@@ -22,6 +22,11 @@ namespace WpfApplicationPatcher.Patchers.ViewModelPartPatchers {
 			log.Info($"Patching {viewModelAssemblyType.FullName} properties...");
 
 			var assemblyPropertyTypes = GetViewModelProperties(viewModelAssemblyType, viewModelPatchingType);
+			if (!assemblyPropertyTypes.Any()) {
+				log.Info("Not found properties");
+				return;
+			}
+
 			log.Debug("Properties found:", assemblyPropertyTypes.Select(property => property.FullName));
 
 			foreach (var assemblyPropertyType in assemblyPropertyTypes) {

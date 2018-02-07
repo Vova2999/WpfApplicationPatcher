@@ -21,8 +21,13 @@ namespace WpfApplicationPatcher.Patchers {
 		public void Patch(AssemblyDefinition monoCecilAssembly, AssemblyContainer assemblyContainer) {
 			log.Info("Patching view models...");
 
+			var viewModelAssemblyTypes = assemblyContainer.GetInheritanceAssemblyTypes(typeof(ViewModelBase)).WhereFrom(monoCecilAssembly.MainModule).ToArray();
+			if (!viewModelAssemblyTypes.Any()) {
+				log.Info("Not found view models");
+				return;
+			}
+
 			var viewModelBaseAssemblyType = assemblyContainer.GetAssemblyTypeByReflectionType(typeof(ViewModelBase)).Load();
-			var viewModelAssemblyTypes = assemblyContainer.GetInheritanceAssemblyTypes(viewModelBaseAssemblyType).WhereFrom(monoCecilAssembly.MainModule).ToArray();
 			log.Debug("View models found:", viewModelAssemblyTypes.Select(viewModelType => viewModelType.FullName));
 
 			foreach (var viewModelAssemblyType in viewModelAssemblyTypes) {
