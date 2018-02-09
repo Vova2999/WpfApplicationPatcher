@@ -1,6 +1,6 @@
-﻿using WpfApplicationPatcher.Types.Common;
+﻿using WpfApplicationPatcher.Core.Types.Common;
+using WpfApplicationPatcher.Core.Types.MonoCecil;
 using WpfApplicationPatcher.Types.Enums;
-using WpfApplicationPatcher.Types.MonoCecil;
 
 namespace WpfApplicationPatcher.Patchers {
 	public interface IViewModelPartPatcher {

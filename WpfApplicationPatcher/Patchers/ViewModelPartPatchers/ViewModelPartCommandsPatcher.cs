@@ -2,12 +2,12 @@
 using System.Linq;
 using System.Reflection;
 using System.Windows.Input;
-using WpfApplicationPatcher.Extensions;
-using WpfApplicationPatcher.Helpers;
+using WpfApplicationPatcher.Core.Extensions;
+using WpfApplicationPatcher.Core.Helpers;
+using WpfApplicationPatcher.Core.Types.Common;
+using WpfApplicationPatcher.Core.Types.MonoCecil;
 using WpfApplicationPatcher.Types.Attributes.Properties;
-using WpfApplicationPatcher.Types.Common;
 using WpfApplicationPatcher.Types.Enums;
-using WpfApplicationPatcher.Types.MonoCecil;
 
 namespace WpfApplicationPatcher.Patchers.ViewModelPartPatchers {
 	public class ViewModelPartCommandsPatcher : IViewModelPartPatcher {

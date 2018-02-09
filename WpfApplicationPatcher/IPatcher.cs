@@ -1,5 +1,5 @@
-﻿using WpfApplicationPatcher.Types;
-using WpfApplicationPatcher.Types.MonoCecil;
+﻿using WpfApplicationPatcher.Core.Types;
+using WpfApplicationPatcher.Core.Types.MonoCecil;
 
 namespace WpfApplicationPatcher {
 	public interface IPatcher {

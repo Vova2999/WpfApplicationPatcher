@@ -1,11 +1,11 @@
 ﻿using System.Linq;
 using GalaSoft.MvvmLight;
-using WpfApplicationPatcher.Extensions;
-using WpfApplicationPatcher.Helpers;
-using WpfApplicationPatcher.Types;
+using WpfApplicationPatcher.Core.Extensions;
+using WpfApplicationPatcher.Core.Helpers;
+using WpfApplicationPatcher.Core.Types;
+using WpfApplicationPatcher.Core.Types.MonoCecil;
 using WpfApplicationPatcher.Types.Attributes.ViewModels;
 using WpfApplicationPatcher.Types.Enums;
-using WpfApplicationPatcher.Types.MonoCecil;
 
 namespace WpfApplicationPatcher.Patchers {
 	public class ViewModelPatcher : IPatcher {

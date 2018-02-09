@@ -1,7 +1,7 @@
 ﻿using System.Linq;
-using WpfApplicationPatcher.Extensions;
-using WpfApplicationPatcher.Factories;
-using WpfApplicationPatcher.Helpers;
+using WpfApplicationPatcher.Core.Extensions;
+using WpfApplicationPatcher.Core.Factories;
+using WpfApplicationPatcher.Core.Helpers;
 
 namespace WpfApplicationPatcher {
 	public class WpfApplicationPatcherProcessor {

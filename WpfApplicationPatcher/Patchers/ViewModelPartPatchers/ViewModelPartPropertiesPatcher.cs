@@ -3,12 +3,12 @@ using System.Linq;
 using System.Windows.Input;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
-using WpfApplicationPatcher.Extensions;
-using WpfApplicationPatcher.Helpers;
+using WpfApplicationPatcher.Core.Extensions;
+using WpfApplicationPatcher.Core.Helpers;
+using WpfApplicationPatcher.Core.Types.Common;
+using WpfApplicationPatcher.Core.Types.MonoCecil;
 using WpfApplicationPatcher.Types.Attributes.Properties;
-using WpfApplicationPatcher.Types.Common;
 using WpfApplicationPatcher.Types.Enums;
-using WpfApplicationPatcher.Types.MonoCecil;
 
 namespace WpfApplicationPatcher.Patchers.ViewModelPartPatchers {
 	public class ViewModelPartPropertiesPatcher : IViewModelPartPatcher {
@@ -109,12 +109,9 @@ namespace WpfApplicationPatcher.Patchers.ViewModelPartPatchers {
 		[DoNotAddLogOffset]
 		private void GenerateSetMethodBody(MonoCecilAssembly monoCecilAssembly, CommonType viewModelBaseAssemblyType, MonoCecilProperty property, string propertyName, MonoCecilField backgroundField) {
 			log.Info("Generate method reference on Set method in ViewModelBase...");
-			//var methodDefinition = new GenericInstanceMethod(GetSetMethodInViewModelBase(viewModelBaseAssemblyType.MonoCecilType).Instance);
 			var monoCecilGenericInstanceMethod = MonoCecilGenericInstanceMethod.Create(GetSetMethodInViewModelBase(viewModelBaseAssemblyType.MonoCecilType));
 			monoCecilGenericInstanceMethod.AddGenericArgument(property.PropertyType);
-			//methodDefinition.GenericArguments.Add(property.PropertyType.Instance);
 			var setMethodInViewModelBaseWithGenericParameter = monoCecilAssembly.MainModule.Import(monoCecilGenericInstanceMethod);
-			//var setMethodInViewModelBaseWithGenericParameter = monoCecilAssembly.MainModule.Instance.Import(methodDefinition);
 			log.Info("Method reference was generated");
 
 			log.Info("Generate set method body...");
@@ -127,7 +124,6 @@ namespace WpfApplicationPatcher.Patchers.ViewModelPartPatchers {
 			setMethodBodyInstructions.Add(MonoCecilInstruction.Create(OpCodes.Ldarg_1));
 			setMethodBodyInstructions.Add(MonoCecilInstruction.Create(OpCodes.Ldc_I4_0));
 			setMethodBodyInstructions.Add(MonoCecilInstruction.Create(OpCodes.Call, setMethodInViewModelBaseWithGenericParameter));
-			//setMethodBodyInstructions.Instance.Add(Instruction.Create(OpCodes.Call, setMethodInViewModelBaseWithGenericParameter));
 			setMethodBodyInstructions.Add(MonoCecilInstruction.Create(OpCodes.Pop));
 			setMethodBodyInstructions.Add(MonoCecilInstruction.Create(OpCodes.Ret));
 			log.Info("Set method body was generated");
