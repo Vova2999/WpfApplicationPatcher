@@ -3,7 +3,6 @@ using System.IO;
 using System.Linq;
 using Ninject;
 using WpfApplicationPatcher.Helpers;
-using WpfApplicationPatcher.Types.Reflection;
 
 namespace WpfApplicationPatcher {
 	public static class Program {

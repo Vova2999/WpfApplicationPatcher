@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Reflection;
 using System.Windows.Input;
-using Mono.Cecil;
 using WpfApplicationPatcher.Extensions;
 using WpfApplicationPatcher.Helpers;
 using WpfApplicationPatcher.Types.Attributes.Properties;

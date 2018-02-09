@@ -11,7 +11,7 @@ namespace WpfApplicationPatcher.Types.Reflection {
 
 		[CanBeNull]
 		public ReflectionType GetReflectionTypeByName(string typeFullName) {
-			return Instance.Select(assembly => assembly.GetType(typeFullName)).FirstOrDefault(type => type != null).ToReflectionType();
+			return Instance.Select(assembly => assembly.GetType(typeFullName)).FirstOrDefault(type => type != null)?.ToReflectionType();
 		}
 	}
 }

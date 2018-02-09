@@ -28,21 +28,21 @@ namespace WpfApplicationPatcher.Extensions {
 		public static MonoCecilInstructions ToMonoCecilInstructions(this Collection<Instruction> instructions) {
 			return new MonoCecilInstructions(instructions);
 		}
-		
+
 		public static IEnumerable<MonoCecilMethod> ToMonoCecilMethods(this IEnumerable<MethodDefinition> methodDefinitions) {
 			return methodDefinitions.Select(methodDefinition => methodDefinition.ToMonoCecilMethod());
 		}
 		public static MonoCecilMethod ToMonoCecilMethod(this MethodDefinition methodDefinition) {
 			return new MonoCecilMethod(methodDefinition);
 		}
-		
+
 		public static IEnumerable<MonoCecilMethodReference> ToMonoCecilMethodReferences(this IEnumerable<MethodReference> methodReferences) {
 			return methodReferences.Select(methodReference => methodReference.ToMonoCecilMethodReference());
 		}
 		public static MonoCecilMethodReference ToMonoCecilMethodReference(this MethodReference methodReference) {
 			return new MonoCecilMethodReference(methodReference);
 		}
-		
+
 		public static MonoCecilMethodBody ToMonoCecilMethodBody(this MethodBody methodBody) {
 			return new MonoCecilMethodBody(methodBody);
 		}

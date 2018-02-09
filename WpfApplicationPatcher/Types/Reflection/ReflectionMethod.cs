@@ -2,7 +2,6 @@
 using System.Reflection;
 using WpfApplicationPatcher.Extensions;
 using WpfApplicationPatcher.Types.Base;
-using WpfApplicationPatcher.Types.MonoCecil;
 
 namespace WpfApplicationPatcher.Types.Reflection {
 	public class ReflectionMethod : ObjectBase<MethodInfo> {

@@ -5,7 +5,6 @@ using System.Reflection;
 using JetBrains.Annotations;
 using WpfApplicationPatcher.Extensions;
 using WpfApplicationPatcher.Types.Reflection;
-using Assembly = System.Reflection.Assembly;
 
 namespace WpfApplicationPatcher.Factories {
 	public class ReflectionAssemblyFactory {
@@ -25,7 +24,7 @@ namespace WpfApplicationPatcher.Factories {
 
 			AppDomain.CurrentDomain.AssemblyResolve += (sender, args) =>
 				foundedAssemblyFiles.TryGetValue(new AssemblyName(args.Name).Name, out var assemblyFile) ? Assembly.Load(File.ReadAllBytes(assemblyFile)) : null;
-			
+
 			return new[] { mainAssembly }.Concat(mainAssembly.GetReferencedAssemblies().Select(Assembly.Load)).ToReflectionAssembly();
 		}
 	}

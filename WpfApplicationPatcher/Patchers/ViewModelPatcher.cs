@@ -1,6 +1,5 @@
 ﻿using System.Linq;
 using GalaSoft.MvvmLight;
-using Mono.Cecil;
 using WpfApplicationPatcher.Extensions;
 using WpfApplicationPatcher.Helpers;
 using WpfApplicationPatcher.Types;

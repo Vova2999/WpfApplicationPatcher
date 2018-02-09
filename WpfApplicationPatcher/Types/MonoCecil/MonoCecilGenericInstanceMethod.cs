@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using Mono.Cecil;
 using WpfApplicationPatcher.Extensions;
 using WpfApplicationPatcher.Types.Base;

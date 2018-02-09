@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Mono.Cecil;
 using WpfApplicationPatcher.Types.Common;
 using WpfApplicationPatcher.Types.MonoCecil;
-using WpfApplicationPatcher.Types.Reflection;
 
 namespace WpfApplicationPatcher.Extensions {
 	public static class AssemblyTypeExtensions {

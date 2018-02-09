@@ -1,5 +1,4 @@
-﻿using Mono.Cecil;
-using WpfApplicationPatcher.Types;
+﻿using WpfApplicationPatcher.Types;
 using WpfApplicationPatcher.Types.MonoCecil;
 
 namespace WpfApplicationPatcher {

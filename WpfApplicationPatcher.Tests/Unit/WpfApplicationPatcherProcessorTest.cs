@@ -1,9 +1,4 @@
-﻿using Mono.Cecil;
-using Moq;
-using NUnit.Framework;
-using WpfApplicationPatcher.Factories;
-using WpfApplicationPatcher.Types;
-using WpfApplicationPatcher.Types.Reflection;
+﻿using NUnit.Framework;
 
 namespace WpfApplicationPatcher.Tests.Unit {
 	[TestFixture]
@@ -25,7 +20,7 @@ namespace WpfApplicationPatcher.Tests.Unit {
 		//	assemblyContainerFactory.Setup(factory => factory.Create(reflectionAssembly.Object, assemblyDefinition.Object)).Returns(() => assemblyContainer.Object);
 
 		//	var patchers = new Mock<IPatcher[]>(MockBehavior.Strict);
-			
+
 		//	var wpfApplicationPatcherProcessor = new WpfApplicationPatcherProcessor(
 		//		reflectionAssemblyFactory.Object,
 		//		assemblyDefinitionFactory.Object,
