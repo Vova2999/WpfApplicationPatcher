@@ -3,6 +3,6 @@ using WpfApplicationPatcher.Core.Types.MonoCecil;
 
 namespace WpfApplicationPatcher {
 	public interface IPatcher {
-		void Patch(MonoCecilAssembly monoCecilAssembly, CommonAssemblyContainer assemblyContainer);
+		void Patch(MonoCecilAssembly monoCecilAssembly, CommonAssemblyContainer commonAssemblyContainer);
 	}
 }

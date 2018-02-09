@@ -19,38 +19,38 @@ namespace WpfApplicationPatcher.Patchers.ViewModelPartPatchers {
 		}
 
 		[DoNotAddLogOffset]
-		public void Patch(MonoCecilAssembly monoCecilAssembly, CommonType viewModelBaseAssemblyType, CommonType viewModelAssemblyType, ViewModelPatchingType viewModelPatchingType) {
-			log.Info($"Patching {viewModelAssemblyType.FullName} properties...");
+		public void Patch(MonoCecilAssembly monoCecilAssembly, CommonType viewModelBase, CommonType viewModel, ViewModelPatchingType viewModelPatchingType) {
+			log.Info($"Patching {viewModel.FullName} properties...");
 
-			var assemblyPropertyTypes = GetViewModelProperties(viewModelAssemblyType, viewModelPatchingType);
-			if (!assemblyPropertyTypes.Any()) {
+			var properties = GetViewModelCommonProperties(viewModel, viewModelPatchingType);
+			if (!properties.Any()) {
 				log.Info("Not found properties");
 				return;
 			}
 
-			log.Debug("Properties found:", assemblyPropertyTypes.Select(property => property.FullName));
+			log.Debug("Properties found:", properties.Select(property => property.FullName));
 
-			foreach (var assemblyPropertyType in assemblyPropertyTypes) {
-				log.Info($"Patching {assemblyPropertyType.FullName}...");
-				PatchProprty(monoCecilAssembly, viewModelBaseAssemblyType, viewModelAssemblyType, assemblyPropertyType);
-				log.Info($"{assemblyPropertyType.FullName} was patched");
+			foreach (var property in properties) {
+				log.Info($"Patching {property.FullName}...");
+				PatchProprty(monoCecilAssembly, viewModelBase, viewModel, property);
+				log.Info($"{property.FullName} was patched");
 			}
 
-			log.Info($"Properties {viewModelAssemblyType.FullName} was patched");
+			log.Info($"Properties {viewModel.FullName} was patched");
 		}
 
 		[DoNotAddLogOffset]
-		private CommonProperty[] GetViewModelProperties(CommonType viewModelAssemblyType, ViewModelPatchingType viewModelPatchingType) {
+		private CommonProperty[] GetViewModelCommonProperties(CommonType viewModel, ViewModelPatchingType viewModelPatchingType) {
 			switch (viewModelPatchingType) {
 				case ViewModelPatchingType.All:
-					return viewModelAssemblyType.Properties
-						.Where(assemblyPropertyType =>
-							assemblyPropertyType.Attributes.NotContains(typeof(NotPatchingPropertyAttribute)) &&
-							(assemblyPropertyType.Attributes.Contains(typeof(PatchingPropertyAttribute)) || assemblyPropertyType.IsNot(typeof(ICommand))))
+					return viewModel.Properties
+						.Where(property =>
+							property.Attributes.NotContains(typeof(NotPatchingPropertyAttribute)) &&
+							(property.Attributes.Contains(typeof(PatchingPropertyAttribute)) || property.IsNot(typeof(ICommand))))
 						.ToArray();
 				case ViewModelPatchingType.Selectively:
-					return viewModelAssemblyType.Properties
-						.Where(assemblyPropertyType => assemblyPropertyType.Attributes.Contains(typeof(PatchingPropertyAttribute)))
+					return viewModel.Properties
+						.Where(property => property.Attributes.Contains(typeof(PatchingPropertyAttribute)))
 						.ToArray();
 				default:
 					log.Error($"Not implement patching for properties with {nameof(ViewModelPatchingType)} = {viewModelPatchingType}");
@@ -58,37 +58,37 @@ namespace WpfApplicationPatcher.Patchers.ViewModelPartPatchers {
 			}
 		}
 
-		private void PatchProprty(MonoCecilAssembly monoCecilAssembly, CommonType viewModelBaseAssemblyType, CommonType viewModelAssemblyType, CommonProperty assemblyPropertyType) {
-			CheckProperty(assemblyPropertyType);
+		private void PatchProprty(MonoCecilAssembly monoCecilAssembly, CommonType viewModelBase, CommonType viewModel, CommonProperty property) {
+			CheckProperty(property);
 
-			var propertyName = assemblyPropertyType.MonoCecilProperty.Name;
+			var propertyName = property.MonoCecilProperty.Name;
 			log.Debug($"Property name: {propertyName}");
 
 			var backgroundFieldName = $"{char.ToLower(propertyName.First())}{propertyName.Substring(1)}";
 			log.Debug($"Background field name: {backgroundFieldName}");
 
-			var backgroundField = viewModelAssemblyType.MonoCecilType.Fields.FirstOrDefault(field => field.Name == backgroundFieldName);
+			var backgroundField = viewModel.MonoCecilType.Fields.FirstOrDefault(field => field.Name == backgroundFieldName);
 
 			if (backgroundField == null) {
-				backgroundField = MonoCecilField.Create(backgroundFieldName, FieldAttributes.Private, assemblyPropertyType.MonoCecilProperty.PropertyType);
-				viewModelAssemblyType.MonoCecilType.AddField(backgroundField);
+				backgroundField = MonoCecilField.Create(backgroundFieldName, FieldAttributes.Private, property.MonoCecilProperty.PropertyType);
+				viewModel.MonoCecilType.AddField(backgroundField);
 				log.Debug("Background field was created");
 			}
 			else
 				log.Debug("Background field was connected");
 
-			GenerateGetMethodBody(assemblyPropertyType.MonoCecilProperty, backgroundField);
-			GenerateSetMethodBody(monoCecilAssembly, viewModelBaseAssemblyType, assemblyPropertyType.MonoCecilProperty, propertyName, backgroundField);
+			GenerateGetMethodBody(property.MonoCecilProperty, backgroundField);
+			GenerateSetMethodBody(monoCecilAssembly, viewModelBase, property.MonoCecilProperty, propertyName, backgroundField);
 		}
 
 		[DoNotAddLogOffset]
-		private void CheckProperty(CommonProperty assemblyPropertyType) {
-			if (assemblyPropertyType.Is(typeof(ICommand))) {
+		private void CheckProperty(CommonProperty property) {
+			if (property.Is(typeof(ICommand))) {
 				log.Error("Patching property type cannot be inherited from ICommand");
 				throw new Exception("Internal error of property patching");
 			}
 
-			if (char.IsUpper(assemblyPropertyType.MonoCecilProperty.Name.First()))
+			if (char.IsUpper(property.MonoCecilProperty.Name.First()))
 				return;
 
 			log.Error("First character of property name must be to upper case");
@@ -109,9 +109,9 @@ namespace WpfApplicationPatcher.Patchers.ViewModelPartPatchers {
 		[DoNotAddLogOffset]
 		private void GenerateSetMethodBody(MonoCecilAssembly monoCecilAssembly, CommonType viewModelBaseAssemblyType, MonoCecilProperty property, string propertyName, MonoCecilField backgroundField) {
 			log.Info("Generate method reference on Set method in ViewModelBase...");
-			var monoCecilGenericInstanceMethod = MonoCecilGenericInstanceMethod.Create(GetSetMethodInViewModelBase(viewModelBaseAssemblyType.MonoCecilType));
-			monoCecilGenericInstanceMethod.AddGenericArgument(property.PropertyType);
-			var setMethodInViewModelBaseWithGenericParameter = monoCecilAssembly.MainModule.Import(monoCecilGenericInstanceMethod);
+			var setMethodFromViewModelBase = MonoCecilGenericInstanceMethod.Create(GetSetMethodFromViewModelBase(viewModelBaseAssemblyType.MonoCecilType));
+			setMethodFromViewModelBase.AddGenericArgument(property.PropertyType);
+			var setMethodInViewModelBaseWithGenericParameter = monoCecilAssembly.MainModule.Import(setMethodFromViewModelBase);
 
 			log.Info("Generate set method body...");
 			var setMethodBodyInstructions = property.SetMethod.Body.Instructions;
@@ -129,7 +129,7 @@ namespace WpfApplicationPatcher.Patchers.ViewModelPartPatchers {
 		}
 
 		private static MonoCecilMethod setMethodInViewModelBase;
-		private static MonoCecilMethod GetSetMethodInViewModelBase(MonoCecilType viewModelBaseType) {
+		private static MonoCecilMethod GetSetMethodFromViewModelBase(MonoCecilType viewModelBaseType) {
 			return setMethodInViewModelBase ?? (setMethodInViewModelBase =
 				viewModelBaseType.Methods.Single(method =>
 					method.Name == "Set" &&

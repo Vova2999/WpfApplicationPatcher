@@ -23,7 +23,7 @@ namespace WpfApplicationPatcher {
 			if (!args.Any())
 				throw new ArgumentException("You must specify path to wpf application");
 
-			var wpfApplicationPath = args.First();
+			var wpfApplicationPath = args.FirstOrDefault();
 			if (string.IsNullOrEmpty(wpfApplicationPath))
 				throw new ArgumentException("Path to wpf application can not be empty");
 

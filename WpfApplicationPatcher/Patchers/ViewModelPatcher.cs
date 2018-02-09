@@ -18,28 +18,28 @@ namespace WpfApplicationPatcher.Patchers {
 		}
 
 		[DoNotAddLogOffset]
-		public void Patch(MonoCecilAssembly monoCecilAssembly, CommonAssemblyContainer assemblyContainer) {
+		public void Patch(MonoCecilAssembly monoCecilAssembly, CommonAssemblyContainer commonAssemblyContainer) {
 			log.Info("Patching view models...");
 
-			var viewModelAssemblyTypes = assemblyContainer.GetInheritanceCommonTypes(typeof(ViewModelBase)).WhereFrom(monoCecilAssembly.MainModule).ToArray();
-			if (!viewModelAssemblyTypes.Any()) {
+			var viewModels = commonAssemblyContainer.GetInheritanceCommonTypes(typeof(ViewModelBase)).WhereFrom(monoCecilAssembly.MainModule).ToArray();
+			if (!viewModels.Any()) {
 				log.Info("Not found view models");
 				return;
 			}
 
-			var viewModelBaseAssemblyType = assemblyContainer.GetCommonType(typeof(ViewModelBase)).Load();
-			log.Debug("View models found:", viewModelAssemblyTypes.Select(viewModelType => viewModelType.FullName));
+			var viewModelBase = commonAssemblyContainer.GetCommonType(typeof(ViewModelBase)).Load();
+			log.Debug("View models found:", viewModels.Select(viewModel => viewModel.FullName));
 
-			foreach (var viewModelAssemblyType in viewModelAssemblyTypes) {
-				log.Info($"Patching {viewModelAssemblyType.FullName}...");
-				viewModelAssemblyType.Load();
+			foreach (var viewModel in viewModels) {
+				log.Info($"Patching {viewModel.FullName}...");
+				viewModel.Load();
 
-				var patchingViewModelAttribute = viewModelAssemblyType.GetReflectionAttribute<PatchingViewModelAttribute>();
+				var patchingViewModelAttribute = viewModel.GetReflectionAttribute<PatchingViewModelAttribute>();
 				var viewModelPatchingType = patchingViewModelAttribute?.ViewModelPatchingType ?? ViewModelPatchingType.All;
 				log.Info($"View model patching type: {viewModelPatchingType}");
 
-				viewModelPartPatchers.ForEach(viewModelPatcher => viewModelPatcher.Patch(monoCecilAssembly, viewModelBaseAssemblyType, viewModelAssemblyType, viewModelPatchingType));
-				log.Info($"{viewModelAssemblyType.FullName} was patched");
+				viewModelPartPatchers.ForEach(viewModelPatcher => viewModelPatcher.Patch(monoCecilAssembly, viewModelBase, viewModel, viewModelPatchingType));
+				log.Info($"{viewModel.FullName} was patched");
 			}
 
 			log.Info("View models was patched");

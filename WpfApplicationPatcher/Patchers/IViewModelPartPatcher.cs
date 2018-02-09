@@ -4,6 +4,6 @@ using WpfApplicationPatcher.Types.Enums;
 
 namespace WpfApplicationPatcher.Patchers {
 	public interface IViewModelPartPatcher {
-		void Patch(MonoCecilAssembly monoCecilAssembly, CommonType viewModelBaseAssemblyType, CommonType viewModelAssemblyType, ViewModelPatchingType viewModelPatchingType);
+		void Patch(MonoCecilAssembly monoCecilAssembly, CommonType viewModelBase, CommonType viewModel, ViewModelPatchingType viewModelPatchingType);
 	}
 }
