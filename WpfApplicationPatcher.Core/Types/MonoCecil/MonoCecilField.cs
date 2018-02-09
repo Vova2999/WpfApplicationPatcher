@@ -2,12 +2,14 @@
 using WpfApplicationPatcher.Core.Types.Base;
 
 namespace WpfApplicationPatcher.Core.Types.MonoCecil {
-	public class MonoCecilField : ObjectBase<FieldDefinition> {
-		public MonoCecilField(FieldDefinition instance) : base(instance) {
+	public class MonoCecilField : FieldBase<FieldDefinition> {
+		public override string Name => GetOrCreate(() => Instance.Name);
+
+		internal MonoCecilField(FieldDefinition instance) : base(instance) {
 		}
-		public string Name => Instance.Name;
-		public static MonoCecilField Create(string fieldName, FieldAttributes fieldAttributes, MonoCecilTypeReference monoCecilType) {
-			return new MonoCecilField(new FieldDefinition(fieldName, fieldAttributes, monoCecilType.Instance));
+
+		public static MonoCecilField Create(string fieldName, FieldAttributes fieldAttributes, MonoCecilTypeReference monoCecilTypeReference) {
+			return new MonoCecilField(new FieldDefinition(fieldName, fieldAttributes, monoCecilTypeReference.Instance));
 		}
 	}
 }

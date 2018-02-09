@@ -5,26 +5,17 @@ using WpfApplicationPatcher.Core.Extensions;
 using WpfApplicationPatcher.Core.Types.Base;
 
 namespace WpfApplicationPatcher.Core.Types.Reflection {
-	public class ReflectionType : ObjectBase<Type> {
-		public string FullName => Instance.FullName;
+	public class ReflectionType : TypeBase<Type, ReflectionType, ReflectionField, ReflectionMethod, ReflectionProperty, ReflectionAttribute> {
+		private const BindingFlags bindingFlags = BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
 
-		public ReflectionType(Type instance) : base(instance) {
-		}
+		public override string FullName => GetOrCreate(() => Instance.FullName);
+		public override ReflectionType BaseType => GetOrCreate(() => Instance.BaseType.ToReflectionType());
+		public override IEnumerable<ReflectionField> Fields => GetOrCreate(() => Instance.GetFields(bindingFlags).ToReflectionFields());
+		public override IEnumerable<ReflectionMethod> Methods => GetOrCreate(() => Instance.GetMethods(bindingFlags).ToReflectionMethods());
+		public override IEnumerable<ReflectionProperty> Properties => GetOrCreate(() => Instance.GetProperties(bindingFlags).ToReflectionProperties());
+		public override IEnumerable<ReflectionAttribute> Attributes => GetOrCreate(() => Instance.GetCustomAttributes().ToReflectionAttributes());
 
-		public IEnumerable<ReflectionMethod> GetMethods(BindingFlags bindingFlags) {
-			return Instance.GetMethods(bindingFlags).ToReflectionMethods();
-		}
-		public IEnumerable<ReflectionProperty> GetProperties(BindingFlags bindingAttr) {
-			return Instance.GetProperties(bindingAttr).ToReflectionProperties();
-		}
-		public IEnumerable<ReflectionAttribute> GetCustomAttributes() {
-			return Instance.GetCustomAttributes().ToReflectionAttributes();
-		}
-		public bool IsAssignableFrom(ReflectionType reflectionType) {
-			return Instance.IsAssignableFrom(reflectionType.Instance);
-		}
-		public TAttribute GetReflectionAttribute<TAttribute>() where TAttribute : Attribute {
-			return Instance.GetCustomAttribute<TAttribute>();
+		internal ReflectionType(Type instance) : base(instance) {
 		}
 	}
 }

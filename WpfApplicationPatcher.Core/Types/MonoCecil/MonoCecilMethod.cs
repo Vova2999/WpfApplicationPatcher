@@ -1,18 +1,21 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using Mono.Cecil;
 using WpfApplicationPatcher.Core.Extensions;
 using WpfApplicationPatcher.Core.Types.Base;
 
 namespace WpfApplicationPatcher.Core.Types.MonoCecil {
-	public class MonoCecilMethod : ObjectBase<MethodDefinition> {
-		public string Name => Instance.Name;
-		public List<MonoCecilParameter> Parameters => Instance.Parameters.ToMonoCecilParameters().ToList();
-		public IEnumerable<MonoCecilAttribute> CustomAttributes => Instance.CustomAttributes.ToMonoCecilAttributes();
-		public string FullName => Instance.FullName;
-		public MonoCecilMethodBody Body => Instance.Body.ToMonoCecilMethodBody();
+	public class MonoCecilMethod : MethodBase<MethodDefinition, MonoCecilParameter, MonoCecilAttribute> {
+		public override string Name => GetOrCreate(() => Instance.Name);
+		public override string FullName => GetOrCreate(() => Instance.FullName);
+		public override IEnumerable<MonoCecilParameter> Parameters => GetOrCreate(() => Instance.Parameters.ToMonoCecilParameters());
+		public override IEnumerable<MonoCecilAttribute> Attributes => GetOrCreate(() => Instance.CustomAttributes.ToMonoCecilAttributes());
+		public MonoCecilMethodBody Body => GetOrCreate(() => Instance.Body.ToMonoCecilMethodBody());
 
-		public MonoCecilMethod(MethodDefinition instance) : base(instance) {
+		internal MonoCecilMethod(MethodDefinition instance) : base(instance) {
+		}
+
+		public override MonoCecilParameter GetParameterByIndex(int index) {
+			return Instance.Parameters[index].ToMonoCecilParameter();
 		}
 	}
 }

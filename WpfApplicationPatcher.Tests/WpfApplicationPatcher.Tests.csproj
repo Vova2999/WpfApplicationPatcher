@@ -110,6 +110,6 @@
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>..\..\..\WpfApplicationPatcher\bin\Debug\WpfApplicationPatcher.exe WpfApplicationPatcher.Tests.dll</PostBuildEvent>
+    <PostBuildEvent>rem ..\..\..\WpfApplicationPatcher\bin\Debug\WpfApplicationPatcher.exe WpfApplicationPatcher.Tests.dll</PostBuildEvent>
   </PropertyGroup>
 </Project>

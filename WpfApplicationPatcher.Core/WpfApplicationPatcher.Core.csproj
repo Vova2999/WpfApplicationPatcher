@@ -58,23 +58,31 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Extensions\CommonAttributeTypeExtensions.cs" />
-    <Compile Include="Extensions\CommonPropertyTypeExtensions.cs" />
+    <Compile Include="Extensions\CommonAttributeExtensions.cs" />
+    <Compile Include="Extensions\CommonPropertyExtensions.cs" />
     <Compile Include="Extensions\CommonTypeExtensions.cs" />
     <Compile Include="Extensions\EnumerableExtensions.cs" />
     <Compile Include="Extensions\ToMonoCecilObjectExtensions.cs" />
     <Compile Include="Extensions\ToReflectionObjectExtensions.cs" />
-    <Compile Include="Factories\AssemblyContainerFactory.cs" />
-    <Compile Include="Factories\AssemblyDefinitionFactory.cs" />
+    <Compile Include="Factories\CommonAssemblyContainerFactory.cs" />
+    <Compile Include="Factories\MonoCecilAssemblyFactory.cs" />
     <Compile Include="Factories\ReflectionAssemblyFactory.cs" />
     <Compile Include="Helpers\Log.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Types\Base\ObjectBase.cs" />
+    <Compile Include="Types\Base\AssemblyBase.cs" />
+    <Compile Include="Types\Base\AttributeBase.cs" />
+    <Compile Include="Types\Base\MethodBase.cs" />
+    <Compile Include="Types\Base\TypeBase.cs" />
+    <Compile Include="Types\ObjectBase.cs" />
+    <Compile Include="Types\Base\ParameterBase.cs" />
+    <Compile Include="Types\Base\PropertyBase.cs" />
+    <Compile Include="Types\Reflection\ReflectionField.cs" />
     <Compile Include="Types\CommonAssemblyContainer.cs" />
     <Compile Include="Types\Common\CommonAttribute.cs" />
     <Compile Include="Types\Common\CommonMethod.cs" />
     <Compile Include="Types\Common\CommonProperty.cs" />
     <Compile Include="Types\Common\CommonType.cs" />
+    <Compile Include="Types\Base\FieldBase.cs" />
     <Compile Include="Types\MonoCecil\MonoCecilAssembly.cs" />
     <Compile Include="Types\MonoCecil\MonoCecilAttribute.cs" />
     <Compile Include="Types\MonoCecil\MonoCecilField.cs" />

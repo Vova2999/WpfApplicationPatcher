@@ -21,20 +21,20 @@ namespace WpfApplicationPatcher.Patchers {
 		public void Patch(MonoCecilAssembly monoCecilAssembly, CommonAssemblyContainer assemblyContainer) {
 			log.Info("Patching view models...");
 
-			var viewModelAssemblyTypes = assemblyContainer.GetInheritanceAssemblyTypes(typeof(ViewModelBase)).WhereFrom(monoCecilAssembly.MainModule).ToArray();
+			var viewModelAssemblyTypes = assemblyContainer.GetInheritanceCommonTypes(typeof(ViewModelBase)).WhereFrom(monoCecilAssembly.MainModule).ToArray();
 			if (!viewModelAssemblyTypes.Any()) {
 				log.Info("Not found view models");
 				return;
 			}
 
-			var viewModelBaseAssemblyType = assemblyContainer.GetAssemblyTypeByReflectionType(typeof(ViewModelBase)).Load();
+			var viewModelBaseAssemblyType = assemblyContainer.GetCommonType(typeof(ViewModelBase)).Load();
 			log.Debug("View models found:", viewModelAssemblyTypes.Select(viewModelType => viewModelType.FullName));
 
 			foreach (var viewModelAssemblyType in viewModelAssemblyTypes) {
 				log.Info($"Patching {viewModelAssemblyType.FullName}...");
 				viewModelAssemblyType.Load();
 
-				var patchingViewModelAttribute = viewModelAssemblyType.ReflectionType.GetReflectionAttribute<PatchingViewModelAttribute>();
+				var patchingViewModelAttribute = viewModelAssemblyType.GetReflectionAttribute<PatchingViewModelAttribute>();
 				var viewModelPatchingType = patchingViewModelAttribute?.ViewModelPatchingType ?? ViewModelPatchingType.All;
 				log.Info($"View model patching type: {viewModelPatchingType}");
 

@@ -1,21 +1,21 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using WpfApplicationPatcher.Core.Extensions;
 using WpfApplicationPatcher.Core.Types.Base;
 
 namespace WpfApplicationPatcher.Core.Types.Reflection {
-	public class ReflectionMethod : ObjectBase<MethodInfo> {
-		public string Name => Instance.Name;
+	public class ReflectionMethod : MethodBase<MethodInfo, ReflectionParameter, ReflectionAttribute> {
+		public override string Name => GetOrCreate(() => Instance.Name);
+		public override string FullName => GetOrCreate(() => Instance.DeclaringType == null ? Name : $"{Instance.DeclaringType?.FullName}.{Name}");
+		public override IEnumerable<ReflectionParameter> Parameters => GetOrCreate(() => Instance.GetParameters().ToReflectionParameters().ToArray());
+		public override IEnumerable<ReflectionAttribute> Attributes => GetOrCreate(() => Instance.GetCustomAttributes().ToReflectionAttributes());
 
-		public ReflectionMethod(MethodInfo instance) : base(instance) {
+		internal ReflectionMethod(MethodInfo instance) : base(instance) {
 		}
 
-		public IEnumerable<ReflectionParameter> GetParameters() {
-			return Instance.GetParameters().ToReflectionParameters();
-		}
-
-		public IEnumerable<ReflectionAttribute> GetCustomAttributes() {
-			return Instance.GetCustomAttributes().ToReflectionAttributes();
+		public override ReflectionParameter GetParameterByIndex(int index) {
+			return Parameters.ToCreatedArray()[index];
 		}
 	}
 }

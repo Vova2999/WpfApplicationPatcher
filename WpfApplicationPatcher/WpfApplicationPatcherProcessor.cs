@@ -6,18 +6,18 @@ using WpfApplicationPatcher.Core.Helpers;
 namespace WpfApplicationPatcher {
 	public class WpfApplicationPatcherProcessor {
 		private readonly ReflectionAssemblyFactory reflectionAssemblyFactory;
-		private readonly AssemblyDefinitionFactory assemblyDefinitionFactory;
-		private readonly AssemblyContainerFactory assemblyContainerFactory;
+		private readonly MonoCecilAssemblyFactory monoCecilAssemblyFactory;
+		private readonly CommonAssemblyContainerFactory commonAssemblyContainerFactory;
 		private readonly IPatcher[] patchers;
 		private readonly Log log;
 
 		public WpfApplicationPatcherProcessor(ReflectionAssemblyFactory reflectionAssemblyFactory,
-											  AssemblyDefinitionFactory assemblyDefinitionFactory,
-											  AssemblyContainerFactory assemblyContainerFactory,
+											  MonoCecilAssemblyFactory monoCecilAssemblyFactory,
+											  CommonAssemblyContainerFactory commonAssemblyContainerFactory,
 											  IPatcher[] patchers) {
 			this.reflectionAssemblyFactory = reflectionAssemblyFactory;
-			this.assemblyDefinitionFactory = assemblyDefinitionFactory;
-			this.assemblyContainerFactory = assemblyContainerFactory;
+			this.monoCecilAssemblyFactory = monoCecilAssemblyFactory;
+			this.commonAssemblyContainerFactory = commonAssemblyContainerFactory;
 			this.patchers = patchers;
 			log = Log.For(this);
 		}
@@ -26,11 +26,11 @@ namespace WpfApplicationPatcher {
 		public void PatchApplication(string wpfApplicationPath) {
 			log.Info("Reading assembly...");
 			var reflectionAssembly = reflectionAssemblyFactory.Craete(wpfApplicationPath);
-			var monoCecilAssembly = assemblyDefinitionFactory.Create(wpfApplicationPath);
+			var monoCecilAssembly = monoCecilAssemblyFactory.Create(wpfApplicationPath);
 			log.Info("Assembly was readed");
 
 			log.Info("Building assembly container...");
-			var assemblyContainer = assemblyContainerFactory.Create(reflectionAssembly, monoCecilAssembly);
+			var assemblyContainer = commonAssemblyContainerFactory.Create(reflectionAssembly, monoCecilAssembly);
 			log.Info("Assembly container was built");
 
 			log.Debug("Types found:", assemblyContainer.CommonAssemblyTypes.Select(assemblyType => assemblyType.FullName));
@@ -39,9 +39,9 @@ namespace WpfApplicationPatcher {
 			patchers.ForEach(patcher => patcher.Patch(monoCecilAssembly, assemblyContainer));
 			log.Info("Application was patched");
 
-			log.Info("Write assembly...");
-			assemblyDefinitionFactory.Write(monoCecilAssembly, wpfApplicationPath);
-			log.Info("Assembly was recorded");
+			log.Info("Save assembly...");
+			monoCecilAssemblyFactory.Save(monoCecilAssembly, wpfApplicationPath);
+			log.Info("Assembly was saved");
 		}
 	}
 }

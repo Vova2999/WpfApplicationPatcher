@@ -7,7 +7,6 @@ using log4net;
 using log4net.Core;
 
 namespace WpfApplicationPatcher.Core.Helpers {
-	// ReSharper disable MemberCanBePrivate.Global
 	// ReSharper disable UnusedMember.Global
 	// ReSharper disable UnusedParameter.Global
 

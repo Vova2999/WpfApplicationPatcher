@@ -12,17 +12,13 @@ namespace WpfApplicationPatcher.Core.Types {
 			CommonAssemblyTypes = commonAssemblyTypes;
 		}
 
-		public CommonType GetAssemblyTypeByReflectionType(Type reflectionType) {
-			return CommonAssemblyTypes.FirstOrDefault(assemblyType => assemblyType.ReflectionType.Instance == reflectionType)
-				?? throw new ArgumentException($"Not found type '{reflectionType.FullName}'");
+		public CommonType GetCommonType(Type type) {
+			return CommonAssemblyTypes.FirstOrDefault(commonType => commonType.ReflectionType.Instance == type)
+				?? throw new ArgumentException($"Not found type '{type.FullName}'");
 		}
 
-		public IEnumerable<CommonType> GetInheritanceAssemblyTypes(CommonType assemblyType) {
-			return GetInheritanceAssemblyTypes(assemblyType.ReflectionType.Instance);
-		}
-
-		public IEnumerable<CommonType> GetInheritanceAssemblyTypes(Type reflectionType) {
-			return CommonAssemblyTypes.Where(assemblyType => assemblyType.Is(reflectionType));
+		public IEnumerable<CommonType> GetInheritanceCommonTypes(Type type) {
+			return CommonAssemblyTypes.Where(commonType => commonType.Is(type));
 		}
 	}
 }

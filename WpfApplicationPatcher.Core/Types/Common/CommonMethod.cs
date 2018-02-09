@@ -8,7 +8,7 @@ namespace WpfApplicationPatcher.Core.Types.Common {
 		public readonly MonoCecilMethod MonoCecilMethod;
 		public readonly ReflectionMethod ReflectionMethod;
 
-		public CommonMethod(string fullName, CommonAttribute[] attributes, MonoCecilMethod monoCecilMethod, ReflectionMethod reflectionMethod) {
+		internal CommonMethod(string fullName, CommonAttribute[] attributes, MonoCecilMethod monoCecilMethod, ReflectionMethod reflectionMethod) {
 			FullName = fullName;
 			Attributes = attributes;
 			MonoCecilMethod = monoCecilMethod;

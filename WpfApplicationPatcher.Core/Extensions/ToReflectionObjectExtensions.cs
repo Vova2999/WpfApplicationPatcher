@@ -5,6 +5,9 @@ using System.Reflection;
 using WpfApplicationPatcher.Core.Types.Reflection;
 
 namespace WpfApplicationPatcher.Core.Extensions {
+	// ReSharper disable MemberCanBePrivate.Global
+	// ReSharper disable UnusedMember.Global
+
 	public static class ToReflectionObjectExtensions {
 		public static ReflectionAssembly ToReflectionAssembly(this IEnumerable<Assembly> assemblies) {
 			return new ReflectionAssembly(assemblies.ToCreatedArray());
@@ -15,6 +18,13 @@ namespace WpfApplicationPatcher.Core.Extensions {
 		}
 		public static ReflectionAttribute ToReflectionAttribute(this Attribute attribute) {
 			return new ReflectionAttribute(attribute);
+		}
+
+		public static IEnumerable<ReflectionField> ToReflectionFields(this IEnumerable<FieldInfo> fieldInfos) {
+			return fieldInfos.Select(fieldInfo => fieldInfo.ToReflectionField());
+		}
+		public static ReflectionField ToReflectionField(this FieldInfo fieldInfo) {
+			return new ReflectionField(fieldInfo);
 		}
 
 		public static IEnumerable<ReflectionMethod> ToReflectionMethods(this IEnumerable<MethodInfo> methodInfos) {

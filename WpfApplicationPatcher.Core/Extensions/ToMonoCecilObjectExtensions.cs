@@ -7,12 +7,15 @@ using WpfApplicationPatcher.Core.Types.MonoCecil;
 
 namespace WpfApplicationPatcher.Core.Extensions {
 	public static class ToMonoCecilObjectExtensions {
+		// ReSharper disable MemberCanBePrivate.Global
+		// ReSharper disable UnusedMember.Global
+
 		public static MonoCecilAssembly ToMonoCecilAssembly(this AssemblyDefinition assemblyDefinition) {
 			return new MonoCecilAssembly(assemblyDefinition);
 		}
 
 		public static IEnumerable<MonoCecilAttribute> ToMonoCecilAttributes(this IEnumerable<CustomAttribute> customAttributes) {
-			return customAttributes.Select(attribute => attribute.ToMonoCecilAttribute());
+			return customAttributes.Select(customAttribute => customAttribute.ToMonoCecilAttribute());
 		}
 		public static MonoCecilAttribute ToMonoCecilAttribute(this CustomAttribute customAttribute) {
 			return new MonoCecilAttribute(customAttribute);
@@ -59,7 +62,7 @@ namespace WpfApplicationPatcher.Core.Extensions {
 		}
 
 		public static IEnumerable<MonoCecilProperty> ToMonoCecilProperties(this IEnumerable<PropertyDefinition> propertyDefinitions) {
-			return propertyDefinitions.Select(propertyInfo => propertyInfo.ToMonoCecilProperty());
+			return propertyDefinitions.Select(propertyDefinition => propertyDefinition.ToMonoCecilProperty());
 		}
 		public static MonoCecilProperty ToMonoCecilProperty(this PropertyDefinition propertyDefinition) {
 			return new MonoCecilProperty(propertyDefinition);
@@ -73,7 +76,7 @@ namespace WpfApplicationPatcher.Core.Extensions {
 		}
 
 		public static IEnumerable<MonoCecilTypeReference> ToMonoCecilTypeReferences(this IEnumerable<TypeReference> typeReferences) {
-			return typeReferences.Select(type => type.ToMonoCecilTypeReference());
+			return typeReferences.Select(typeReference => typeReference.ToMonoCecilTypeReference());
 		}
 		public static MonoCecilTypeReference ToMonoCecilTypeReference(this TypeReference typeReference) {
 			return new MonoCecilTypeReference(typeReference);

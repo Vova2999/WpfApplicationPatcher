@@ -3,10 +3,10 @@ using WpfApplicationPatcher.Core.Extensions;
 using WpfApplicationPatcher.Core.Types.Base;
 
 namespace WpfApplicationPatcher.Core.Types.Reflection {
-	public class ReflectionParameter : ObjectBase<ParameterInfo> {
-		public ReflectionType ParameterType => Instance.ParameterType.ToReflectionType();
+	public class ReflectionParameter : ParameterBase<ParameterInfo, ReflectionType> {
+		public override ReflectionType ParameterType => GetOrCreate(() => Instance.ParameterType.ToReflectionType());
 
-		public ReflectionParameter(ParameterInfo instance) : base(instance) {
+		internal ReflectionParameter(ParameterInfo instance) : base(instance) {
 		}
 	}
 }

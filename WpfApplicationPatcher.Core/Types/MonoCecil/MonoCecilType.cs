@@ -1,22 +1,19 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using Mono.Cecil;
 using WpfApplicationPatcher.Core.Extensions;
 using WpfApplicationPatcher.Core.Types.Base;
 
 namespace WpfApplicationPatcher.Core.Types.MonoCecil {
-	public class MonoCecilType : ObjectBase<TypeDefinition> {
-		public string FullName => Instance.FullName;
-		public IEnumerable<MonoCecilMethod> Methods => Instance.Methods.Select(methodDefinition => new MonoCecilMethod(methodDefinition));
-		public IEnumerable<MonoCecilProperty> Properties => Instance.Properties.ToMonoCecilProperties();
-		public IEnumerable<MonoCecilAttribute> CustomAttributes => Instance.CustomAttributes.ToMonoCecilAttributes();
-		public MonoCecilModule Module => Instance.Module.ToMonoCecilModule();
-		public MonoCecilTypeReference BaseType => Instance.BaseType?.ToMonoCecilTypeReference();
-		public IEnumerable<MonoCecilField> Fields => Instance.Fields.ToMonoCecilFields();
-		public bool IsByReference => Instance.IsByReference;
-		public bool IsGenericParameter => Instance.IsGenericParameter;
+	public class MonoCecilType : TypeBase<TypeDefinition, MonoCecilTypeReference, MonoCecilField, MonoCecilMethod, MonoCecilProperty, MonoCecilAttribute> {
+		public override string FullName => GetOrCreate(() => Instance.FullName);
+		public override MonoCecilTypeReference BaseType => GetOrCreate(() => Instance.BaseType?.ToMonoCecilTypeReference());
+		public override IEnumerable<MonoCecilField> Fields => GetOrCreate(() => Instance.Fields.ToMonoCecilFields());
+		public override IEnumerable<MonoCecilMethod> Methods => GetOrCreate(() => Instance.Methods.ToMonoCecilMethods());
+		public override IEnumerable<MonoCecilProperty> Properties => GetOrCreate(() => Instance.Properties.ToMonoCecilProperties());
+		public override IEnumerable<MonoCecilAttribute> Attributes => GetOrCreate(() => Instance.CustomAttributes.ToMonoCecilAttributes());
+		public MonoCecilModule Module => GetOrCreate(() => Instance.Module.ToMonoCecilModule());
 
-		public MonoCecilType(TypeDefinition instance) : base(instance) {
+		internal MonoCecilType(TypeDefinition instance) : base(instance) {
 		}
 
 		public void AddField(MonoCecilField monoCecilField) {

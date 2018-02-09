@@ -4,14 +4,15 @@ using WpfApplicationPatcher.Core.Extensions;
 using WpfApplicationPatcher.Core.Types.Base;
 
 namespace WpfApplicationPatcher.Core.Types.MonoCecil {
-	public class MonoCecilProperty : ObjectBase<PropertyDefinition> {
-		public MonoCecilProperty(PropertyDefinition instance) : base(instance) {
+	public class MonoCecilProperty : PropertyBase<PropertyDefinition, MonoCecilMethod, MonoCecilTypeReference, MonoCecilAttribute> {
+		public override string Name => GetOrCreate(() => Instance.Name);
+		public override string FullName => GetOrCreate(() => Instance.FullName);
+		public override MonoCecilMethod GetMethod => GetOrCreate(() => Instance.GetMethod.ToMonoCecilMethod());
+		public override MonoCecilMethod SetMethod => GetOrCreate(() => Instance.SetMethod.ToMonoCecilMethod());
+		public override MonoCecilTypeReference PropertyType => GetOrCreate(() => Instance.PropertyType.ToMonoCecilTypeReference());
+		public override IEnumerable<MonoCecilAttribute> Attributes => GetOrCreate(() => Instance.CustomAttributes.ToMonoCecilAttributes());
+
+		internal MonoCecilProperty(PropertyDefinition instance) : base(instance) {
 		}
-		public IEnumerable<MonoCecilAttribute> CustomAttributes => Instance.CustomAttributes.ToMonoCecilAttributes();
-		public string Name => Instance.Name;
-		public string FullName => Instance.FullName;
-		public MonoCecilTypeReference PropertyType => Instance.PropertyType.ToMonoCecilTypeReference();
-		public MonoCecilMethod GetMethod => Instance.GetMethod.ToMonoCecilMethod();
-		public MonoCecilMethod SetMethod => Instance.SetMethod.ToMonoCecilMethod();
 	}
 }

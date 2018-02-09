@@ -3,9 +3,11 @@ using WpfApplicationPatcher.Core.Extensions;
 using WpfApplicationPatcher.Core.Types.Base;
 
 namespace WpfApplicationPatcher.Core.Types.MonoCecil {
-	public class MonoCecilAttribute : ObjectBase<CustomAttribute> {
-		public MonoCecilAttribute(CustomAttribute instance) : base(instance) {
+	public class MonoCecilAttribute : AttributeBase<CustomAttribute, MonoCecilTypeReference> {
+		public override string FullName => GetOrCreate(() => AttributeType.FullName);
+		public override MonoCecilTypeReference AttributeType => GetOrCreate(() => Instance.AttributeType.ToMonoCecilTypeReference());
+
+		internal MonoCecilAttribute(CustomAttribute instance) : base(instance) {
 		}
-		public MonoCecilTypeReference AttributeType => Instance.AttributeType.ToMonoCecilTypeReference();
 	}
 }

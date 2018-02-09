@@ -112,7 +112,6 @@ namespace WpfApplicationPatcher.Patchers.ViewModelPartPatchers {
 			var monoCecilGenericInstanceMethod = MonoCecilGenericInstanceMethod.Create(GetSetMethodInViewModelBase(viewModelBaseAssemblyType.MonoCecilType));
 			monoCecilGenericInstanceMethod.AddGenericArgument(property.PropertyType);
 			var setMethodInViewModelBaseWithGenericParameter = monoCecilAssembly.MainModule.Import(monoCecilGenericInstanceMethod);
-			log.Info("Method reference was generated");
 
 			log.Info("Generate set method body...");
 			var setMethodBodyInstructions = property.SetMethod.Body.Instructions;
@@ -134,11 +133,11 @@ namespace WpfApplicationPatcher.Patchers.ViewModelPartPatchers {
 			return setMethodInViewModelBase ?? (setMethodInViewModelBase =
 				viewModelBaseType.Methods.Single(method =>
 					method.Name == "Set" &&
-					method.Parameters.Count == 4 &&
-					method.Parameters[0].ParameterType.FullName == typeof(string).FullName &&
-					method.Parameters[1].ParameterType.IsByReference &&
-					method.Parameters[2].ParameterType.IsGenericParameter &&
-					method.Parameters[3].ParameterType.FullName == typeof(bool).FullName));
+					method.Parameters.Count() == 4 &&
+					method.GetParameterByIndex(0).ParameterType.FullName == typeof(string).FullName &&
+					method.GetParameterByIndex(1).ParameterType.IsByReference &&
+					method.GetParameterByIndex(2).ParameterType.IsGenericParameter &&
+					method.GetParameterByIndex(3).ParameterType.FullName == typeof(bool).FullName));
 		}
 	}
 }

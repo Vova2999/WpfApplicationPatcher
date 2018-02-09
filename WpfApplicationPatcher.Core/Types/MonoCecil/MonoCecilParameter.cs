@@ -3,10 +3,10 @@ using WpfApplicationPatcher.Core.Extensions;
 using WpfApplicationPatcher.Core.Types.Base;
 
 namespace WpfApplicationPatcher.Core.Types.MonoCecil {
-	public class MonoCecilParameter : ObjectBase<ParameterDefinition> {
-		public MonoCecilTypeReference ParameterType => Instance.ParameterType.ToMonoCecilTypeReference();
+	public class MonoCecilParameter : ParameterBase<ParameterDefinition, MonoCecilTypeReference> {
+		public override MonoCecilTypeReference ParameterType => GetOrCreate(() => Instance.ParameterType.ToMonoCecilTypeReference());
 
-		public MonoCecilParameter(ParameterDefinition instance) : base(instance) {
+		internal MonoCecilParameter(ParameterDefinition instance) : base(instance) {
 		}
 	}
 }

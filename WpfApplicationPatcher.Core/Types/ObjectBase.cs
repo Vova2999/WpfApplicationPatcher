@@ -1,11 +1,21 @@
-﻿namespace WpfApplicationPatcher.Core.Types.Base {
+﻿using System;
+using System.Collections.Concurrent;
+using System.Diagnostics;
+
+namespace WpfApplicationPatcher.Core.Types {
 	// ReSharper disable PossibleNullReferenceException
 
 	public class ObjectBase<TObject> where TObject : class {
-		public readonly TObject Instance;
+		internal readonly TObject Instance;
+		private readonly ConcurrentDictionary<string, object> values;
 
 		protected ObjectBase(TObject instance) {
 			Instance = instance;
+			values = new ConcurrentDictionary<string, object>();
+		}
+
+		protected TValue GetOrCreate<TValue>(Func<TValue> value) {
+			return (TValue)values.GetOrAdd(new StackTrace().GetFrame(1).GetMethod().Name, _ => value());
 		}
 
 		public override int GetHashCode() {
@@ -18,11 +28,9 @@
 		public static bool operator ==(ObjectBase<TObject> left, ObjectBase<TObject> right) {
 			return IsNull(left?.Instance) == IsNull(right?.Instance) && (IsNull(left?.Instance) || left.Instance.Equals(right.Instance));
 		}
-
 		public static bool operator !=(ObjectBase<TObject> left, ObjectBase<TObject> right) {
 			return IsNull(left?.Instance) != IsNull(right?.Instance) || !IsNull(left?.Instance) && !left.Instance.Equals(right.Instance);
 		}
-
 		private static bool IsNull(object obj) {
 			return obj?.Equals(null) != false;
 		}

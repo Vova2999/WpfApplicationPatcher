@@ -6,7 +6,7 @@ namespace WpfApplicationPatcher.Core.Types.Common {
 		public readonly MonoCecilAttribute MonoCecilAttribute;
 		public readonly ReflectionAttribute ReflectionAttribute;
 
-		public CommonAttribute(MonoCecilAttribute monoCecilAttribute, ReflectionAttribute reflectionAttribute) {
+		internal CommonAttribute(MonoCecilAttribute monoCecilAttribute, ReflectionAttribute reflectionAttribute) {
 			MonoCecilAttribute = monoCecilAttribute;
 			ReflectionAttribute = reflectionAttribute;
 		}

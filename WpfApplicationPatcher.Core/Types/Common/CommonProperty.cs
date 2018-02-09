@@ -8,7 +8,7 @@ namespace WpfApplicationPatcher.Core.Types.Common {
 		public readonly MonoCecilProperty MonoCecilProperty;
 		public readonly ReflectionProperty ReflectionProperty;
 
-		public CommonProperty(string fullName, CommonAttribute[] attributes, MonoCecilProperty monoCecilProperty, ReflectionProperty reflectionProperty) {
+		internal CommonProperty(string fullName, CommonAttribute[] attributes, MonoCecilProperty monoCecilProperty, ReflectionProperty reflectionProperty) {
 			FullName = fullName;
 			Attributes = attributes;
 			MonoCecilProperty = monoCecilProperty;

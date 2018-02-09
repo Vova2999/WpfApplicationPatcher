@@ -1,18 +1,15 @@
 using Mono.Cecil;
-using WpfApplicationPatcher.Core.Extensions;
-using WpfApplicationPatcher.Core.Types.Base;
 
 namespace WpfApplicationPatcher.Core.Types.MonoCecil {
 	public class MonoCecilTypeReference : ObjectBase<TypeReference> {
-		public string FullName => Instance.FullName;
-		public MonoCecilModule Module => Instance.Module.ToMonoCecilModule();
-		public bool IsByReference => Instance.IsByReference;
-		public bool IsGenericParameter => Instance.IsGenericParameter;
+		public string FullName => GetOrCreate(() => Instance.FullName);
+		public bool IsByReference => GetOrCreate(() => Instance.IsByReference);
+		public bool IsGenericParameter => GetOrCreate(() => Instance.IsGenericParameter);
 
-		public MonoCecilTypeReference(TypeReference instance) : base(instance) {
+		internal MonoCecilTypeReference(TypeReference instance) : base(instance) {
 		}
 
-		public MonoCecilType ToMonoCecilType() {
+		public MonoCecilType Resolve() {
 			return new MonoCecilType(Instance.Resolve());
 		}
 	}
