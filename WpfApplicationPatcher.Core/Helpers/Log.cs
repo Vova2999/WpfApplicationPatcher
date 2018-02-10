@@ -95,7 +95,10 @@ namespace WpfApplicationPatcher.Core.Helpers {
 			var stackTrace = new StackTrace();
 			var offset = (stackTrace.GetFrames() ?? throw new Exception())
 				.Select(frame => frame.GetMethod())
-				.Where(method => method.DeclaringType != typeof(Log))
+				.Where(method =>
+					method.DeclaringType != typeof(Log) &&
+					method.DeclaringType?.FullName?.StartsWith("System") == false &&
+					method.DeclaringType?.FullName?.StartsWith("NUnit") == false)
 				.Count(method => method.GetCustomAttribute<DoNotAddLogOffsetAttribute>() == null);
 
 			OffsetString = new string('\t', offset - 1);
@@ -105,7 +108,7 @@ namespace WpfApplicationPatcher.Core.Helpers {
 			return message.ToString().Replace("\n", $"\r\n{OffsetString}");
 		}
 		private static string JoinMultiline(string message, IEnumerable<string> messages) {
-			return ConvertMultiline(string.Join("\n", new[] { message }.Concat(messages.Select((m, i) => $"  {i + 1}) {m}"))));
+			return ConvertMultiline(string.Join("\n", new[] { message }.Concat(messages?.Select((m, i) => $"  {i + 1}) {m}") ?? Enumerable.Empty<string>())));
 		}
 	}
 

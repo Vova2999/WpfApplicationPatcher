@@ -3,13 +3,13 @@ using WpfApplicationPatcher.Core.Types.Reflection;
 
 namespace WpfApplicationPatcher.Core.Types.Common {
 	public class CommonMethod {
-		public readonly string FullName;
+		public string Name => MonoCecilMethod.Name;
+		public string FullName => MonoCecilMethod.FullName;
 		public readonly CommonAttribute[] Attributes;
 		public readonly MonoCecilMethod MonoCecilMethod;
 		public readonly ReflectionMethod ReflectionMethod;
 
-		internal CommonMethod(string fullName, CommonAttribute[] attributes, MonoCecilMethod monoCecilMethod, ReflectionMethod reflectionMethod) {
-			FullName = fullName;
+		internal CommonMethod(CommonAttribute[] attributes, MonoCecilMethod monoCecilMethod, ReflectionMethod reflectionMethod) {
 			Attributes = attributes;
 			MonoCecilMethod = monoCecilMethod;
 			ReflectionMethod = reflectionMethod;

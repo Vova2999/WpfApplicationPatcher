@@ -5,7 +5,7 @@ using WpfApplicationPatcher.Core.Types.Base;
 
 namespace WpfApplicationPatcher.Core.Types.MonoCecil {
 	public class MonoCecilAssembly : AssemblyBase<AssemblyDefinition, MonoCecilType> {
-		public MonoCecilModule MainModule => GetOrCreate(() => Instance.MainModule.ToMonoCecilModule());
+		public virtual MonoCecilModule MainModule => GetOrCreate(() => Instance.MainModule.ToMonoCecilModule());
 
 		internal MonoCecilAssembly(AssemblyDefinition instance) : base(instance) {
 		}

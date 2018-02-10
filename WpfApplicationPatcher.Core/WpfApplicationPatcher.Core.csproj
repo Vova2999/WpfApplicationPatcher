@@ -66,6 +66,7 @@
     <Compile Include="Extensions\ToReflectionObjectExtensions.cs" />
     <Compile Include="Factories\CommonAssemblyContainerFactory.cs" />
     <Compile Include="Factories\MonoCecilAssemblyFactory.cs" />
+    <Compile Include="Factories\MonoCecilFactory.cs" />
     <Compile Include="Factories\ReflectionAssemblyFactory.cs" />
     <Compile Include="Helpers\Log.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -73,6 +74,8 @@
     <Compile Include="Types\Base\AttributeBase.cs" />
     <Compile Include="Types\Base\MethodBase.cs" />
     <Compile Include="Types\Base\TypeBase.cs" />
+    <Compile Include="Types\Common\CommonField.cs" />
+    <Compile Include="Types\Common\CommonParameter.cs" />
     <Compile Include="Types\ObjectBase.cs" />
     <Compile Include="Types\Base\ParameterBase.cs" />
     <Compile Include="Types\Base\PropertyBase.cs" />

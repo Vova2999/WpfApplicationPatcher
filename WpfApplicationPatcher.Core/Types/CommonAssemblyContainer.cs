@@ -6,19 +6,20 @@ using WpfApplicationPatcher.Core.Types.Common;
 
 namespace WpfApplicationPatcher.Core.Types {
 	public class CommonAssemblyContainer {
-		public readonly CommonType[] CommonAssemblyTypes;
+		public IEnumerable<string> FullNames => commonAssemblyTypes?.Select(assemblyType => assemblyType.FullName) ?? Enumerable.Empty<string>();
+		private readonly CommonType[] commonAssemblyTypes;
 
-		public CommonAssemblyContainer(CommonType[] commonAssemblyTypes) {
-			CommonAssemblyTypes = commonAssemblyTypes;
+		internal CommonAssemblyContainer(CommonType[] commonAssemblyTypes) {
+			this.commonAssemblyTypes = commonAssemblyTypes;
 		}
 
 		public CommonType GetCommonType(Type type) {
-			return CommonAssemblyTypes.FirstOrDefault(commonType => commonType.ReflectionType.Instance == type)
+			return commonAssemblyTypes?.FirstOrDefault(commonType => commonType.ReflectionType.Instance == type)
 				?? throw new ArgumentException($"Not found type '{type.FullName}'");
 		}
 
 		public IEnumerable<CommonType> GetInheritanceCommonTypes(Type type) {
-			return CommonAssemblyTypes.Where(commonType => commonType.Is(type));
+			return commonAssemblyTypes?.Where(commonType => commonType.Is(type));
 		}
 	}
 }

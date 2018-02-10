@@ -25,7 +25,7 @@ namespace WpfApplicationPatcher {
 		[DoNotAddLogOffset]
 		public void PatchApplication(string wpfApplicationPath) {
 			log.Info("Reading assembly...");
-			var reflectionAssembly = reflectionAssemblyFactory.Craete(wpfApplicationPath);
+			var reflectionAssembly = reflectionAssemblyFactory.Create(wpfApplicationPath);
 			var monoCecilAssembly = monoCecilAssemblyFactory.Create(wpfApplicationPath);
 			log.Info("Assembly was readed");
 
@@ -33,7 +33,11 @@ namespace WpfApplicationPatcher {
 			var assemblyContainer = commonAssemblyContainerFactory.Create(reflectionAssembly, monoCecilAssembly);
 			log.Info("Assembly container was built");
 
-			log.Debug("Types found:", assemblyContainer.CommonAssemblyTypes.Select(assemblyType => assemblyType.FullName));
+			var assemblyContainerFullNames = assemblyContainer.FullNames.ToArray();
+			if (assemblyContainerFullNames.Any())
+				log.Debug("Types found:", assemblyContainerFullNames);
+			else
+				log.Debug("Types not found");
 
 			log.Info("Patching application...");
 			patchers.ForEach(patcher => patcher.Patch(monoCecilAssembly, assemblyContainer));

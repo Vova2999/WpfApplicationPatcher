@@ -5,17 +5,18 @@ using WpfApplicationPatcher.Core.Types.Reflection;
 
 namespace WpfApplicationPatcher.Core.Types.Common {
 	public class CommonType {
-		public readonly string FullName;
+		public virtual string Name => MonoCecilType.Name;
+		public virtual string FullName => MonoCecilType.FullName;
 		public readonly MonoCecilType MonoCecilType;
 		public readonly ReflectionType ReflectionType;
 
 		private bool isLoaded;
-		public CommonMethod[] Methods { get; private set; }
-		public CommonProperty[] Properties { get; private set; }
-		public CommonAttribute[] Attributes { get; private set; }
+		public virtual CommonField[] Fields { get; private set; }
+		public virtual CommonMethod[] Methods { get; private set; }
+		public virtual CommonProperty[] Properties { get; private set; }
+		public virtual CommonAttribute[] Attributes { get; private set; }
 
-		internal CommonType(string fullName, MonoCecilType monoCecilType, ReflectionType reflectionType) {
-			FullName = fullName;
+		internal CommonType(MonoCecilType monoCecilType, ReflectionType reflectionType) {
 			MonoCecilType = monoCecilType;
 			ReflectionType = reflectionType;
 		}
@@ -24,12 +25,29 @@ namespace WpfApplicationPatcher.Core.Types.Common {
 			if (isLoaded)
 				return this;
 
+			LoadFields();
 			LoadMethods();
 			LoadProperties();
 			LoadAttributes();
 
 			isLoaded = true;
 			return this;
+		}
+
+		private void LoadFields() {
+			Fields = MonoCecilType.Fields
+				.Select(monoCecilField => CreateCommonField(monoCecilField, ReflectionType.Fields))
+				.Where(commonField => commonField != null)
+				.ToArray();
+		}
+
+		private static CommonField CreateCommonField(MonoCecilField monoCecilField, IEnumerable<ReflectionField> reflectionFields) {
+			var matchedReflectionField = reflectionFields.FirstOrDefault(propertyInfo => propertyInfo.Name == monoCecilField.Name);
+			if (matchedReflectionField == null)
+				return null;
+
+			var fieldAttributes = JoinAttributes(matchedReflectionField.Attributes, monoCecilField.Attributes);
+			return new CommonField(fieldAttributes, monoCecilField, matchedReflectionField);
 		}
 
 		private void LoadMethods() {
@@ -46,7 +64,7 @@ namespace WpfApplicationPatcher.Core.Types.Common {
 				return null;
 
 			var methodAttributes = JoinAttributes(matchedReflectionMethod.Attributes, monoCecilMethod.Attributes);
-			return new CommonMethod(monoCecilMethod.FullName, methodAttributes, monoCecilMethod, matchedReflectionMethod);
+			return new CommonMethod(methodAttributes, monoCecilMethod, matchedReflectionMethod);
 		}
 
 		private static ReflectionMethod GetMatchedReflectionMethod(MonoCecilMethod monoCecilMethod, IEnumerable<ReflectionMethod> reflectionMethods) {
@@ -65,12 +83,12 @@ namespace WpfApplicationPatcher.Core.Types.Common {
 		}
 
 		private static CommonProperty CreateCommonProperty(MonoCecilProperty monoCecilProperty, IEnumerable<ReflectionProperty> reflectionProperties) {
-			var reflectionProperty = reflectionProperties.FirstOrDefault(propertyInfo => propertyInfo.Name == monoCecilProperty.Name);
-			if (reflectionProperty == null)
+			var matchedReflectionProperty = reflectionProperties.FirstOrDefault(reflectionProperty => reflectionProperty.Name == monoCecilProperty.Name);
+			if (matchedReflectionProperty == null)
 				return null;
 
-			var propertyAttributes = JoinAttributes(reflectionProperty.Attributes, monoCecilProperty.Attributes);
-			return new CommonProperty(monoCecilProperty.FullName, propertyAttributes, monoCecilProperty, reflectionProperty);
+			var propertyAttributes = JoinAttributes(matchedReflectionProperty.Attributes, monoCecilProperty.Attributes);
+			return new CommonProperty(propertyAttributes, monoCecilProperty, matchedReflectionProperty);
 		}
 
 		private void LoadAttributes() {

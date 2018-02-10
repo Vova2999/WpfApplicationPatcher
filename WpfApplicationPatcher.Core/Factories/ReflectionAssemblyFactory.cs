@@ -8,7 +8,7 @@ using WpfApplicationPatcher.Core.Types.Reflection;
 
 namespace WpfApplicationPatcher.Core.Factories {
 	public class ReflectionAssemblyFactory {
-		public virtual ReflectionAssembly Craete([NotNull] string assemblyPath) {
+		public virtual ReflectionAssembly Create([NotNull] string assemblyPath) {
 			var symbolStorePath = Path.ChangeExtension(assemblyPath, "pdb");
 
 			var rawAssembly = File.ReadAllBytes(assemblyPath);

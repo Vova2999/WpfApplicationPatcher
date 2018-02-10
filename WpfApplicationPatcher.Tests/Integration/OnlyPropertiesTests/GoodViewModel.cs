@@ -29,18 +29,24 @@ namespace WpfApplicationPatcher.Tests.Integration.OnlyPropertiesTests {
 			changedProperties = new List<string>();
 		}
 
+		[SetUp]
+		public void SetUp() {
+			changedProperties.Clear();
+		}
+
 		[Test, TestCaseSource(nameof(PropertyTestSource))]
 		public void PropertiesTest(Action<GoodViewModel> setProperty, string propertyName) {
 			for (var i = 1; i <= 10; i++) {
 				setProperty(goodViewModel);
-				changedProperties.Should().BeEquivalentTo(Enumerable.Range(0, i).Select(x => propertyName));
+				changedProperties.Should().BeEquivalentTo(Enumerable.Range(0, i).Select(_ => propertyName));
 			}
 		}
 
 		private static IEnumerable<TestCaseData> PropertyTestSource() {
-			yield return PropertyTestCaseData(goodViewModel => goodViewModel.Number = 1, nameof(GoodViewModel.Number));
-			yield return PropertyTestCaseData(goodViewModel => goodViewModel.Line = "1", nameof(GoodViewModel.Line));
-			yield return PropertyTestCaseData(goodViewModel => goodViewModel.Value = 1.0, nameof(GoodViewModel.Value));
+			var random = new Random(1);
+			yield return PropertyTestCaseData(goodViewModel => goodViewModel.Number = random.Next(), nameof(GoodViewModel.Number));
+			yield return PropertyTestCaseData(goodViewModel => goodViewModel.Line = random.Next().ToString(), nameof(GoodViewModel.Line));
+			yield return PropertyTestCaseData(goodViewModel => goodViewModel.Value = (double)random.Next() / 100, nameof(GoodViewModel.Value));
 			yield return PropertyTestCaseData(goodViewModel => goodViewModel.AdditionalType = new GoodViewModelAdditionalType(), nameof(GoodViewModel.AdditionalType));
 		}
 

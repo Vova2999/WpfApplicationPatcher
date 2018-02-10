@@ -6,11 +6,11 @@ namespace WpfApplicationPatcher.Core.Types.MonoCecil {
 		internal MonoCecilInstructions(Collection<Instruction> instance) : base(instance) {
 		}
 
-		public void Clear() {
+		public virtual void Clear() {
 			Instance.Clear();
 		}
 
-		public void Add(MonoCecilInstruction instruction) {
+		public virtual void Add(MonoCecilInstruction instruction) {
 			Instance.Add(instruction.Instance);
 		}
 	}

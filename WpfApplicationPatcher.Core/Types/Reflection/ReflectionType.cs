@@ -8,6 +8,7 @@ namespace WpfApplicationPatcher.Core.Types.Reflection {
 	public class ReflectionType : TypeBase<Type, ReflectionType, ReflectionField, ReflectionMethod, ReflectionProperty, ReflectionAttribute> {
 		private const BindingFlags bindingFlags = BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
 
+		public override string Name => GetOrCreate(() => Instance.Name);
 		public override string FullName => GetOrCreate(() => Instance.FullName);
 		public override ReflectionType BaseType => GetOrCreate(() => Instance.BaseType.ToReflectionType());
 		public override IEnumerable<ReflectionField> Fields => GetOrCreate(() => Instance.GetFields(bindingFlags).ToReflectionFields());

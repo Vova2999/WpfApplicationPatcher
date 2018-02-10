@@ -10,7 +10,7 @@ namespace WpfApplicationPatcher.Core.Factories {
 	public class CommonAssemblyContainerFactory {
 		public virtual CommonAssemblyContainer Create(ReflectionAssembly reflectionAssembly, MonoCecilAssembly monoCecilAssembly) {
 			var allTypes = GetAllTypes(monoCecilAssembly);
-			return CreateAssemblyContainer(reflectionAssembly, allTypes);
+			return CreateCommonAssemblyContainer(reflectionAssembly, allTypes);
 		}
 
 		private static IEnumerable<MonoCecilType> GetAllTypes(MonoCecilAssembly monoCecilAssembly) {
@@ -30,9 +30,9 @@ namespace WpfApplicationPatcher.Core.Factories {
 			}
 		}
 
-		private static CommonAssemblyContainer CreateAssemblyContainer(ReflectionAssembly reflectionAssembly, IEnumerable<MonoCecilType> allTypes) {
+		private static CommonAssemblyContainer CreateCommonAssemblyContainer(ReflectionAssembly reflectionAssembly, IEnumerable<MonoCecilType> allTypes) {
 			return new CommonAssemblyContainer(allTypes
-				.Select(type => new CommonType(type.FullName, type, reflectionAssembly.GetTypeByName(type.FullName)))
+				.Select(type => new CommonType(type, reflectionAssembly.GetTypeByName(type.FullName)))
 				.Where(assemblyType => assemblyType.ReflectionType != null)
 				.OrderBy(assemblyType => assemblyType.FullName.Length)
 				.ThenBy(assemblyType => assemblyType.FullName)
