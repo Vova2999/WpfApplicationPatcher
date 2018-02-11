@@ -98,7 +98,7 @@ namespace WpfApplicationPatcher.Tests.Unit {
 
 			var viewModelPartPropertiesPatcher = new ViewModelPartPropertiesPatcher(monoCecilFactory.Object);
 
-			var viewModelBase = new FakeCommonTypeBuilder("ViewModel", typeof(ViewModelBase))
+			var viewModelBase = new FakeCommonTypeBuilder("ViewModelBase")
 				.AddMethod(new FakeMethod {
 						Name = "Set",
 						Parameters = new[] {

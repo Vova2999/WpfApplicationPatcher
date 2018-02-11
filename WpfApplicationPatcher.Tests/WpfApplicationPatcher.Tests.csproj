@@ -99,6 +99,7 @@
     <Compile Include="Fake\FakeProperty.cs" />
     <Compile Include="Fake\FakeType.cs" />
     <Compile Include="Integration\OnlyPropertiesTests\GoodViewModel.cs" />
+    <Compile Include="Unit\ObjectBaseCompareTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="FakeCommonTypeBuilder.cs" />
     <Compile Include="Unit\WpfApplicationPatcherProcessorTest.cs" />

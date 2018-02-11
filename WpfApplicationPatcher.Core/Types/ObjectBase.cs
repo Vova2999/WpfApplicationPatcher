@@ -5,7 +5,7 @@ using System.Diagnostics;
 namespace WpfApplicationPatcher.Core.Types {
 	// ReSharper disable PossibleNullReferenceException
 
-	public class ObjectBase<TObject> where TObject : class {
+	public abstract class ObjectBase<TObject> where TObject : class {
 		internal readonly TObject Instance;
 		private readonly ConcurrentDictionary<string, object> values;
 
@@ -26,10 +26,10 @@ namespace WpfApplicationPatcher.Core.Types {
 		}
 
 		public static bool operator ==(ObjectBase<TObject> left, ObjectBase<TObject> right) {
-			return IsNull(left?.Instance) == IsNull(right?.Instance) && (IsNull(left?.Instance) || left.Instance.Equals(right.Instance));
+			return IsNull(left) == IsNull(right) && (IsNull(left) || IsNull(left.Instance) == IsNull(right.Instance) && (IsNull(left.Instance) || left.Instance.Equals(right.Instance)));
 		}
 		public static bool operator !=(ObjectBase<TObject> left, ObjectBase<TObject> right) {
-			return IsNull(left?.Instance) != IsNull(right?.Instance) || !IsNull(left?.Instance) && !left.Instance.Equals(right.Instance);
+			return IsNull(left) != IsNull(right) || !IsNull(left) && (IsNull(left.Instance) != IsNull(right.Instance) || !IsNull(left.Instance) && !left.Instance.Equals(right.Instance));
 		}
 		private static bool IsNull(object obj) {
 			return obj?.Equals(null) != false;

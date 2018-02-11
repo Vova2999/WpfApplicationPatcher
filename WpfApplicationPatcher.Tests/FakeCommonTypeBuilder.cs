@@ -20,9 +20,9 @@ namespace WpfApplicationPatcher.Tests {
 		private readonly List<FakeProperty> properties = new List<FakeProperty>();
 		private readonly List<FakeAttribute> attributes = new List<FakeAttribute>();
 
-		public FakeCommonTypeBuilder(string typeName, Type baseType) {
+		public FakeCommonTypeBuilder(string typeName, Type baseType = null) {
 			this.typeName = typeName;
-			this.baseType = baseType;
+			this.baseType = baseType ?? typeof(object);
 		}
 
 		public FakeCommonTypeBuilder AddField(FakeField field) {
@@ -109,14 +109,14 @@ namespace WpfApplicationPatcher.Tests {
 			if (fakeMethod == null)
 				return null;
 
-			var fieldName = fakeMethod.Name;
-			var fieldFullName = $"{commonType.Object.FullName}.{fieldName}";
+			var methodName = fakeMethod.Name;
+			var methodFullName = $"{commonType.Object.FullName}.{methodName}";
 			var commonParameters = CreateCommonParameters(fakeMethod.Parameters);
 			var commonAttributes = CreateCommonAttributes(fakeMethod.Attributes);
 
 			var monoCecilMethod = new Mock<MonoCecilMethod>(null);
-			monoCecilMethod.Setup(method => method.Name).Returns(() => fieldName);
-			monoCecilMethod.Setup(method => method.FullName).Returns(() => fieldFullName);
+			monoCecilMethod.Setup(method => method.Name).Returns(() => methodName);
+			monoCecilMethod.Setup(method => method.FullName).Returns(() => methodFullName);
 			monoCecilMethod.Setup(method => method.Parameters).Returns(() => commonParameters.Select(field => field.MonoCecilParameter));
 			monoCecilMethod.Setup(method => method.Attributes).Returns(() => commonAttributes.Select(field => field.MonoCecilAttribute));
 			monoCecilMethod.Setup(method => method.GetParameterByIndex(It.IsAny<int>())).Returns((int index) => commonParameters[index].MonoCecilParameter);
@@ -127,8 +127,8 @@ namespace WpfApplicationPatcher.Tests {
 			monoCecilMethod.Setup(method => method.Body).Returns(() => monoCecilMethodBody.Object);
 
 			var reflectionMethod = new Mock<ReflectionMethod>(null);
-			reflectionMethod.Setup(method => method.Name).Returns(() => fieldName);
-			reflectionMethod.Setup(method => method.FullName).Returns(() => fieldFullName);
+			reflectionMethod.Setup(method => method.Name).Returns(() => methodName);
+			reflectionMethod.Setup(method => method.FullName).Returns(() => methodFullName);
 			reflectionMethod.Setup(method => method.Parameters).Returns(() => commonParameters.Select(field => field.ReflectionParameter));
 			reflectionMethod.Setup(method => method.Attributes).Returns(() => commonAttributes.Select(field => field.ReflectionAttribute));
 			reflectionMethod.Setup(method => method.GetParameterByIndex(It.IsAny<int>())).Returns((int index) => commonParameters[index].ReflectionParameter);
