@@ -80,7 +80,7 @@
     <Compile Include="Types\Base\ParameterBase.cs" />
     <Compile Include="Types\Base\PropertyBase.cs" />
     <Compile Include="Types\Reflection\ReflectionField.cs" />
-    <Compile Include="Types\CommonAssemblyContainer.cs" />
+    <Compile Include="Types\CommonTypeContainer.cs" />
     <Compile Include="Types\Common\CommonAttribute.cs" />
     <Compile Include="Types\Common\CommonMethod.cs" />
     <Compile Include="Types\Common\CommonProperty.cs" />

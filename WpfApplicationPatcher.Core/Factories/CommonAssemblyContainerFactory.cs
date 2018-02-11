@@ -8,7 +8,7 @@ using WpfApplicationPatcher.Core.Types.Reflection;
 
 namespace WpfApplicationPatcher.Core.Factories {
 	public class CommonAssemblyContainerFactory {
-		public virtual CommonAssemblyContainer Create(ReflectionAssembly reflectionAssembly, MonoCecilAssembly monoCecilAssembly) {
+		public virtual CommonTypeContainer Create(ReflectionAssembly reflectionAssembly, MonoCecilAssembly monoCecilAssembly) {
 			var allTypes = GetAllTypes(monoCecilAssembly);
 			return CreateCommonAssemblyContainer(reflectionAssembly, allTypes);
 		}
@@ -30,8 +30,8 @@ namespace WpfApplicationPatcher.Core.Factories {
 			}
 		}
 
-		private static CommonAssemblyContainer CreateCommonAssemblyContainer(ReflectionAssembly reflectionAssembly, IEnumerable<MonoCecilType> allTypes) {
-			return new CommonAssemblyContainer(allTypes
+		private static CommonTypeContainer CreateCommonAssemblyContainer(ReflectionAssembly reflectionAssembly, IEnumerable<MonoCecilType> allTypes) {
+			return new CommonTypeContainer(allTypes
 				.Select(type => new CommonType(type, reflectionAssembly.GetTypeByName(type.FullName)))
 				.Where(assemblyType => assemblyType.ReflectionType != null)
 				.OrderBy(assemblyType => assemblyType.FullName.Length)

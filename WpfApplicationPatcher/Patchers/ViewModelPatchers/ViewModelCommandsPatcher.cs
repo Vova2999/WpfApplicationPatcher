@@ -9,11 +9,11 @@ using WpfApplicationPatcher.Core.Types.MonoCecil;
 using WpfApplicationPatcher.Types.Attributes.Properties;
 using WpfApplicationPatcher.Types.Enums;
 
-namespace WpfApplicationPatcher.Patchers.ViewModelPartPatchers {
-	public class ViewModelPartCommandsPatcher : IViewModelPartPatcher {
+namespace WpfApplicationPatcher.Patchers.ViewModelPatchers {
+	public class ViewModelCommandsPatcher : IViewModelPartPatcher {
 		private readonly Log log;
 
-		public ViewModelPartCommandsPatcher() {
+		public ViewModelCommandsPatcher() {
 			log = Log.For(this);
 		}
 

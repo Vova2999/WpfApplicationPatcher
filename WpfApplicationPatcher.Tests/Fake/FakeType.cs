@@ -2,10 +2,12 @@ using System;
 
 namespace WpfApplicationPatcher.Tests.Fake {
 	public class FakeType {
+		public readonly Type Type;
 		public readonly string Name;
 		public readonly string FullName;
 
 		public FakeType(Type type) {
+			Type = type;
 			Name = type.Name;
 			FullName = type.FullName;
 		}

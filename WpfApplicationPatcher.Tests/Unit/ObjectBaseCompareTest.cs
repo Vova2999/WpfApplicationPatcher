@@ -21,11 +21,11 @@ namespace WpfApplicationPatcher.Tests.Unit {
 			(first == null as ReflectionType).Should().Be(false);
 			(null as ReflectionType == second).Should().Be(false);
 			(first == second).Should().Be(true);
-			
+
 			(firstWithNull == null as ReflectionType).Should().Be(false);
 			(null as ReflectionType == secondWithNull).Should().Be(false);
 			(firstWithNull == secondWithNull).Should().Be(true);
-			
+
 			(firstWithNull == second).Should().Be(false);
 			(first == secondWithNull).Should().Be(false);
 		}

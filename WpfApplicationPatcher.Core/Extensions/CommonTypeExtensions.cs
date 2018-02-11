@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using WpfApplicationPatcher.Core.Types.Common;
 using WpfApplicationPatcher.Core.Types.MonoCecil;
 
@@ -18,7 +17,7 @@ namespace WpfApplicationPatcher.Core.Extensions {
 		}
 
 		public static TAttribute GetReflectionAttribute<TAttribute>(this CommonType commonType) where TAttribute : Attribute {
-			return commonType.ReflectionType.Instance.GetCustomAttribute<TAttribute>();
+			return (TAttribute)commonType.ReflectionType.Attributes.FirstOrDefault(attribute => attribute.AttributeType.Instance == typeof(TAttribute))?.Instance;
 		}
 
 		public static IEnumerable<CommonType> WhereFrom(this IEnumerable<CommonType> commonTypes, MonoCecilModule monoCecilModule) {

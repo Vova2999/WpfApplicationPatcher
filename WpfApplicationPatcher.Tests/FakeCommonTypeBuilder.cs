@@ -13,12 +13,19 @@ namespace WpfApplicationPatcher.Tests {
 	public class FakeCommonTypeBuilder {
 		private const string fakeNamespace = "FakeNamespace";
 
+		private Type currentType;
 		private readonly string typeName;
 		private readonly Type baseType;
+		private MonoCecilModule monoCecilModule;
 		private readonly List<FakeField> fields = new List<FakeField>();
 		private readonly List<FakeMethod> methods = new List<FakeMethod>();
 		private readonly List<FakeProperty> properties = new List<FakeProperty>();
 		private readonly List<FakeAttribute> attributes = new List<FakeAttribute>();
+
+		public FakeCommonTypeBuilder(Type type) {
+			typeName = type.Name;
+			currentType = type;
+		}
 
 		public FakeCommonTypeBuilder(string typeName, Type baseType = null) {
 			this.typeName = typeName;
@@ -42,17 +49,29 @@ namespace WpfApplicationPatcher.Tests {
 			return this;
 		}
 
+		public FakeCommonTypeBuilder WhereFrom(MonoCecilModule monoCecilModule) {
+			if (this.monoCecilModule != null)
+				throw new ArgumentException("Module already saved");
+
+			this.monoCecilModule = monoCecilModule;
+			return this;
+		}
+
 		public CommonType Build() {
-			var assemblyName = new AssemblyName("DynamicAssembly");
-			var assemblyBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(assemblyName, AssemblyBuilderAccess.Run);
-			var moduleBuilder = assemblyBuilder.DefineDynamicModule(assemblyName.Name);
-			var typeBuilder = moduleBuilder.DefineType(typeName, TypeAttributes.Public);
-			typeBuilder.SetParent(baseType);
-			var currentType = typeBuilder.CreateType();
+			if (currentType == null) {
+				var assemblyName = new AssemblyName("DynamicAssembly");
+				var assemblyBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(assemblyName, AssemblyBuilderAccess.Run);
+				var moduleBuilder = assemblyBuilder.DefineDynamicModule(assemblyName.Name);
+				var typeBuilder = moduleBuilder.DefineType(typeName, TypeAttributes.Public);
+				typeBuilder.SetParent(baseType);
+				currentType = typeBuilder.CreateType();
+			}
 
 			var monoCecilType = new Mock<MonoCecilType>(null);
 			monoCecilType.Setup(type => type.Name).Returns(() => typeName);
 			monoCecilType.Setup(type => type.FullName).Returns(() => CreateFullName(typeName));
+			if (monoCecilModule != null)
+				monoCecilType.Setup(type => type.Module).Returns(() => monoCecilModule);
 
 			var reflectionType = new Mock<ReflectionType>(currentType);
 			reflectionType.Setup(type => type.Name).Returns(() => typeName);
@@ -211,16 +230,17 @@ namespace WpfApplicationPatcher.Tests {
 
 			var attributeName = fakeAttribute.Name;
 			var attributeFullName = CreateFullName(attributeName);
+			var fakeTypeForAttribute = new FakeType(fakeAttribute.AttributeType);
 
 			var monoCecilAttribute = new Mock<MonoCecilAttribute>(null);
 			monoCecilAttribute.Setup(attribute => attribute.Name).Returns(() => attributeName);
 			monoCecilAttribute.Setup(attribute => attribute.FullName).Returns(() => attributeFullName);
-			monoCecilAttribute.Setup(attribute => attribute.AttributeType).Returns(() => CreateMonoCecilTypeReference(fakeAttribute.AttributeType));
+			monoCecilAttribute.Setup(attribute => attribute.AttributeType).Returns(() => CreateMonoCecilTypeReference(fakeTypeForAttribute));
 
-			var reflectionAttribute = new Mock<ReflectionAttribute>(null);
+			var reflectionAttribute = new Mock<ReflectionAttribute>(fakeAttribute.AttributeInstance);
 			reflectionAttribute.Setup(attribute => attribute.Name).Returns(() => attributeName);
 			reflectionAttribute.Setup(attribute => attribute.FullName).Returns(() => attributeFullName);
-			reflectionAttribute.Setup(attribute => attribute.AttributeType).Returns(() => CreateReflectionType(fakeAttribute.AttributeType));
+			reflectionAttribute.Setup(attribute => attribute.AttributeType).Returns(() => CreateReflectionType(fakeTypeForAttribute));
 
 			return new Mock<CommonAttribute>(monoCecilAttribute.Object, reflectionAttribute.Object).Object;
 		}
@@ -242,7 +262,7 @@ namespace WpfApplicationPatcher.Tests {
 			if (fakeType == null)
 				return null;
 
-			var reflectionType = new Mock<ReflectionType>(null);
+			var reflectionType = new Mock<ReflectionType>(fakeType.Type);
 			reflectionType.Setup(reference => reference.Name).Returns(() => fakeType.Name);
 			reflectionType.Setup(reference => reference.FullName).Returns(() => fakeType.FullName);
 

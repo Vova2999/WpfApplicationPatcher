@@ -16,6 +16,5 @@ using log4net.Config;
 
 [assembly: Guid("b3772aca-b801-4f80-92a3-0a605fdc1763")]
 
-// [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]

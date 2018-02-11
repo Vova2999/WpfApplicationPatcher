@@ -12,17 +12,17 @@ using WpfApplicationPatcher.Core.Types.MonoCecil;
 using WpfApplicationPatcher.Types.Attributes.Properties;
 using WpfApplicationPatcher.Types.Enums;
 
-namespace WpfApplicationPatcher.Patchers.ViewModelPartPatchers {
-	public class ViewModelPartPropertiesPatcher : IViewModelPartPatcher {
+namespace WpfApplicationPatcher.Patchers.ViewModelPatchers {
+	public class ViewModelPropertiesPatcher : IViewModelPartPatcher {
 		private const string propertyHaveCommandTypeErrorMessage = "Patching property type cannot be inherited from ICommand";
 		private const string propertyNameStartsWithInLowerCaseErrorMessage = "First character of property name must be to upper case";
-		private const string propertyGetMethodMissing = "Patching property must have get method accessor";
-		private const string propertySetMethodMissing = "Patching property must have set method accessor";
+		private const string propertyGetMethodMissingErrorMessage = "Patching property must have get method accessor";
+		private const string propertySetMethodMissingErrorMessage = "Patching property must have set method accessor";
 
 		private readonly MonoCecilFactory monoCecilFactory;
 		private readonly Log log;
 
-		public ViewModelPartPropertiesPatcher(MonoCecilFactory monoCecilFactory) {
+		public ViewModelPropertiesPatcher(MonoCecilFactory monoCecilFactory) {
 			this.monoCecilFactory = monoCecilFactory;
 			log = Log.For(this);
 		}
@@ -109,8 +109,8 @@ namespace WpfApplicationPatcher.Patchers.ViewModelPartPatchers {
 			log.Info("Generate get method body...");
 			var propertyGetMethod = property.GetMethod;
 			if (propertyGetMethod == null) {
-				log.Error(propertyGetMethodMissing);
-				throw new Exception("Internal error of property patching", new Exception(propertyGetMethodMissing));
+				log.Error(propertyGetMethodMissingErrorMessage);
+				throw new Exception("Internal error of property patching", new Exception(propertyGetMethodMissingErrorMessage));
 			}
 
 			var getMethodBodyInstructions = propertyGetMethod.Body.Instructions;
@@ -127,8 +127,8 @@ namespace WpfApplicationPatcher.Patchers.ViewModelPartPatchers {
 			log.Info("Generate method reference on Set method in ViewModelBase...");
 			var propertySetMethod = property.SetMethod;
 			if (propertySetMethod == null) {
-				log.Error(propertyGetMethodMissing);
-				throw new Exception("Internal error of property patching", new Exception(propertyGetMethodMissing));
+				log.Error(propertySetMethodMissingErrorMessage);
+				throw new Exception("Internal error of property patching", new Exception(propertySetMethodMissingErrorMessage));
 			}
 
 			var setMethodFromViewModelBase = monoCecilFactory.CreateGenericInstanceMethod(GetSetMethodFromViewModelBase(viewModelBase.MonoCecilType));

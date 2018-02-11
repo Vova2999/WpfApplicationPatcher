@@ -4,6 +4,7 @@ using WpfApplicationPatcher.Core.Extensions;
 using WpfApplicationPatcher.Core.Helpers;
 using WpfApplicationPatcher.Core.Types;
 using WpfApplicationPatcher.Core.Types.MonoCecil;
+using WpfApplicationPatcher.Patchers.ViewModelPatchers;
 using WpfApplicationPatcher.Types.Attributes.ViewModels;
 using WpfApplicationPatcher.Types.Enums;
 
@@ -18,16 +19,16 @@ namespace WpfApplicationPatcher.Patchers {
 		}
 
 		[DoNotAddLogOffset]
-		public void Patch(MonoCecilAssembly monoCecilAssembly, CommonAssemblyContainer commonAssemblyContainer) {
+		public void Patch(MonoCecilAssembly monoCecilAssembly, CommonTypeContainer commonTypeContainer) {
 			log.Info("Patching view models...");
 
-			var viewModels = commonAssemblyContainer.GetInheritanceCommonTypes(typeof(ViewModelBase)).WhereFrom(monoCecilAssembly.MainModule).ToArray();
+			var viewModels = commonTypeContainer.GetInheritanceCommonTypes(typeof(ViewModelBase)).WhereFrom(monoCecilAssembly.MainModule).ToArray();
 			if (!viewModels.Any()) {
 				log.Info("Not found view models");
 				return;
 			}
 
-			var viewModelBase = commonAssemblyContainer.GetCommonType(typeof(ViewModelBase)).Load();
+			var viewModelBase = commonTypeContainer.GetCommonType(typeof(ViewModelBase)).Load();
 			log.Debug("View models found:", viewModels.Select(viewModel => viewModel.FullName));
 
 			foreach (var viewModel in viewModels) {
