@@ -25,10 +25,10 @@ namespace WpfApplicationPatcher.Core.Types {
 		}
 
 		public static bool operator ==(ObjectBase<TObject> left, ObjectBase<TObject> right) {
-			return IsNull(left) == IsNull(right) && (IsNull(left) || IsNull(left.Instance) == IsNull(right.Instance) && (IsNull(left.Instance) || left.Instance.Equals(right.Instance)));
+			return IsNull(left) == IsNull(right) && (IsNull(left) || IsNull(left.Instance) == IsNull(right.Instance) && (IsNull(left.Instance) || left.Equals(right)));
 		}
 		public static bool operator !=(ObjectBase<TObject> left, ObjectBase<TObject> right) {
-			return IsNull(left) != IsNull(right) || !IsNull(left) && (IsNull(left.Instance) != IsNull(right.Instance) || !IsNull(left.Instance) && !left.Instance.Equals(right.Instance));
+			return IsNull(left) != IsNull(right) || !IsNull(left) && (IsNull(left.Instance) != IsNull(right.Instance) || !IsNull(left.Instance) && !left.Equals(right));
 		}
 
 		[ContractAnnotation("null => true; notnull => false")]
