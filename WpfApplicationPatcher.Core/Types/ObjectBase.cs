@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
+using JetBrains.Annotations;
 
 namespace WpfApplicationPatcher.Core.Types {
-	// ReSharper disable PossibleNullReferenceException
-
 	public abstract class ObjectBase<TObject> where TObject : class {
 		internal readonly TObject Instance;
 		private readonly ConcurrentDictionary<string, object> values;
@@ -31,6 +30,8 @@ namespace WpfApplicationPatcher.Core.Types {
 		public static bool operator !=(ObjectBase<TObject> left, ObjectBase<TObject> right) {
 			return IsNull(left) != IsNull(right) || !IsNull(left) && (IsNull(left.Instance) != IsNull(right.Instance) || !IsNull(left.Instance) && !left.Instance.Equals(right.Instance));
 		}
+
+		[ContractAnnotation("null => true; notnull => false")]
 		private static bool IsNull(object obj) {
 			return obj?.Equals(null) != false;
 		}
