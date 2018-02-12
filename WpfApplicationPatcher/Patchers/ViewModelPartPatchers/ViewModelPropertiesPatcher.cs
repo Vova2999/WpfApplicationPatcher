@@ -12,7 +12,7 @@ using WpfApplicationPatcher.Core.Types.MonoCecil;
 using WpfApplicationPatcher.Types.Attributes.Properties;
 using WpfApplicationPatcher.Types.Enums;
 
-namespace WpfApplicationPatcher.Patchers.ViewModelPatchers {
+namespace WpfApplicationPatcher.Patchers.ViewModelPartPatchers {
 	public class ViewModelPropertiesPatcher : IViewModelPartPatcher {
 		private const string propertyHaveCommandTypeErrorMessage = "Patching property type cannot be inherited from ICommand";
 		private const string propertyNameStartsWithInLowerCaseErrorMessage = "First character of property name must be to upper case";

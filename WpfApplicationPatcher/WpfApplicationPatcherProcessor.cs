@@ -34,10 +34,12 @@ namespace WpfApplicationPatcher {
 			log.Info("Assembly container was built");
 
 			var assemblyContainerFullNames = assemblyContainer.FullNames.ToArray();
-			if (assemblyContainerFullNames.Any())
-				log.Debug("Types found:", assemblyContainerFullNames);
-			else
+			if (!assemblyContainerFullNames.Any()) {
 				log.Debug("Types not found");
+				return;
+			}
+
+			log.Debug("Types found:", assemblyContainerFullNames);
 
 			log.Info("Patching application...");
 			patchers.ForEach(patcher => patcher.Patch(monoCecilAssembly, assemblyContainer));

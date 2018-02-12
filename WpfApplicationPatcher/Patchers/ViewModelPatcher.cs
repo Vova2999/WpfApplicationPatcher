@@ -4,7 +4,6 @@ using WpfApplicationPatcher.Core.Extensions;
 using WpfApplicationPatcher.Core.Helpers;
 using WpfApplicationPatcher.Core.Types;
 using WpfApplicationPatcher.Core.Types.MonoCecil;
-using WpfApplicationPatcher.Patchers.ViewModelPatchers;
 using WpfApplicationPatcher.Types.Attributes.ViewModels;
 using WpfApplicationPatcher.Types.Enums;
 

@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using GalaSoft.MvvmLight;
 using Moq;
 using NUnit.Framework;
 using WpfApplicationPatcher.Core.Factories;
@@ -24,15 +25,15 @@ namespace WpfApplicationPatcher.Tests.Unit {
 			monoCecilAssemblyFactory.Setup(factory => factory.Save(monoCecilAssembly.Object, assemblyPath));
 
 			var commonAssemblyContainerFactory = new Mock<CommonAssemblyContainerFactory>(MockBehavior.Strict);
-			var commonAssemblyContainer = new Mock<CommonTypeContainer>(MockBehavior.Strict, null);
+			var commonAssemblyContainer = new CommonTypeContainer(new[] { new FakeCommonTypeBuilder("ViewModel", typeof(ViewModelBase)).Build() });
 			commonAssemblyContainerFactory
 				.Setup(factory => factory.Create(reflectionAssembly.Object, monoCecilAssembly.Object))
-				.Returns(() => commonAssemblyContainer.Object);
+				.Returns(() => commonAssemblyContainer);
 
 			var patchers = Enumerable.Range(0, patchersCount)
 				.Select(x => {
 					var patcher = new Mock<IPatcher>();
-					patcher.Setup(p => p.Patch(monoCecilAssembly.Object, commonAssemblyContainer.Object));
+					patcher.Setup(p => p.Patch(monoCecilAssembly.Object, commonAssemblyContainer));
 					return patcher;
 				})
 				.ToArray();
@@ -58,7 +59,7 @@ namespace WpfApplicationPatcher.Tests.Unit {
 
 			foreach (var patcher in patchers) {
 				patcher.Verify(p => p.Patch(It.IsAny<MonoCecilAssembly>(), It.IsAny<CommonTypeContainer>()), Times.Once);
-				patcher.Verify(p => p.Patch(monoCecilAssembly.Object, commonAssemblyContainer.Object), Times.Once);
+				patcher.Verify(p => p.Patch(monoCecilAssembly.Object, commonAssemblyContainer), Times.Once);
 			}
 
 			monoCecilAssemblyFactory.Verify(factory => factory.Save(It.IsAny<MonoCecilAssembly>(), It.IsAny<string>()), Times.Once);

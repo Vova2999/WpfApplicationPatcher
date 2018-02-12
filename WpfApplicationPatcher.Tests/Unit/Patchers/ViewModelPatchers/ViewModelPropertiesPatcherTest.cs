@@ -5,7 +5,7 @@ using Moq;
 using NUnit.Framework;
 using WpfApplicationPatcher.Core.Factories;
 using WpfApplicationPatcher.Core.Types.MonoCecil;
-using WpfApplicationPatcher.Patchers.ViewModelPatchers;
+using WpfApplicationPatcher.Patchers.ViewModelPartPatchers;
 using WpfApplicationPatcher.Tests.Fake;
 using WpfApplicationPatcher.Types.Enums;
 

@@ -6,7 +6,7 @@ using WpfApplicationPatcher.Core.Types;
 using WpfApplicationPatcher.Core.Types.Common;
 using WpfApplicationPatcher.Core.Types.MonoCecil;
 using WpfApplicationPatcher.Patchers;
-using WpfApplicationPatcher.Patchers.ViewModelPatchers;
+using WpfApplicationPatcher.Patchers.ViewModelPartPatchers;
 using WpfApplicationPatcher.Tests.Fake;
 using WpfApplicationPatcher.Types.Attributes.ViewModels;
 using WpfApplicationPatcher.Types.Enums;
