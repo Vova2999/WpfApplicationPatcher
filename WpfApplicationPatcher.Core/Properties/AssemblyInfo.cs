@@ -13,6 +13,7 @@ using log4net.Config;
 [assembly: AssemblyCulture("")]
 [assembly: XmlConfigurator(Watch = true)]
 [assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
+[assembly: InternalsVisibleTo("WpfApplicationPatcher.Tests")]
 
 [assembly: ComVisible(false)]
 

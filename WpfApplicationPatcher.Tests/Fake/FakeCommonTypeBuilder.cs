@@ -7,9 +7,9 @@ using Moq;
 using WpfApplicationPatcher.Core.Types.Common;
 using WpfApplicationPatcher.Core.Types.MonoCecil;
 using WpfApplicationPatcher.Core.Types.Reflection;
-using WpfApplicationPatcher.Tests.Fake;
+using WpfApplicationPatcher.Tests.Fake.Types;
 
-namespace WpfApplicationPatcher.Tests {
+namespace WpfApplicationPatcher.Tests.Fake {
 	public class FakeCommonTypeBuilder {
 		private const string fakeNamespace = "FakeNamespace";
 
@@ -22,14 +22,22 @@ namespace WpfApplicationPatcher.Tests {
 		private readonly List<FakeProperty> properties = new List<FakeProperty>();
 		private readonly List<FakeAttribute> attributes = new List<FakeAttribute>();
 
-		public FakeCommonTypeBuilder(Type type) {
+		private FakeCommonTypeBuilder(Type type) {
 			typeName = type.Name;
 			currentType = type;
 		}
 
-		public FakeCommonTypeBuilder(string typeName, Type baseType = null) {
+		private FakeCommonTypeBuilder(string typeName, Type baseType = null) {
 			this.typeName = typeName;
 			this.baseType = baseType ?? typeof(object);
+		}
+
+		public static FakeCommonTypeBuilder Create(Type type) {
+			return new FakeCommonTypeBuilder(type);
+		}
+
+		public static FakeCommonTypeBuilder Create(string typeName, Type baseType = null) {
+			return new FakeCommonTypeBuilder(typeName, baseType);
 		}
 
 		public FakeCommonTypeBuilder AddField(FakeField field) {
@@ -228,21 +236,14 @@ namespace WpfApplicationPatcher.Tests {
 			if (fakeAttribute == null)
 				return null;
 
-			var attributeName = fakeAttribute.Name;
-			var attributeFullName = CreateFullName(attributeName);
-			var fakeTypeForAttribute = new FakeType(fakeAttribute.AttributeType);
-
 			var monoCecilAttribute = new Mock<MonoCecilAttribute>(null);
-			monoCecilAttribute.Setup(attribute => attribute.Name).Returns(() => attributeName);
-			monoCecilAttribute.Setup(attribute => attribute.FullName).Returns(() => attributeFullName);
-			monoCecilAttribute.Setup(attribute => attribute.AttributeType).Returns(() => CreateMonoCecilTypeReference(fakeTypeForAttribute));
+			monoCecilAttribute.Setup(attribute => attribute.Name).Returns(() => fakeAttribute.Name);
+			monoCecilAttribute.Setup(attribute => attribute.FullName).Returns(() => CreateFullName(fakeAttribute.Name));
+			monoCecilAttribute.Setup(attribute => attribute.AttributeType).Returns(() => CreateMonoCecilTypeReference(new FakeType(fakeAttribute.AttributeType)));
 
-			var reflectionAttribute = new Mock<ReflectionAttribute>(fakeAttribute.AttributeInstance);
-			reflectionAttribute.Setup(attribute => attribute.Name).Returns(() => attributeName);
-			reflectionAttribute.Setup(attribute => attribute.FullName).Returns(() => attributeFullName);
-			reflectionAttribute.Setup(attribute => attribute.AttributeType).Returns(() => CreateReflectionType(fakeTypeForAttribute));
+			var reflectionAttribute = new ReflectionAttribute(fakeAttribute.AttributeInstance);
 
-			return new Mock<CommonAttribute>(monoCecilAttribute.Object, reflectionAttribute.Object).Object;
+			return new Mock<CommonAttribute>(monoCecilAttribute.Object, reflectionAttribute).Object;
 		}
 
 		private static string CreateFullName(string name) {

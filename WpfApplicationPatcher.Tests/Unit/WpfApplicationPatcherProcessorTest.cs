@@ -6,6 +6,7 @@ using WpfApplicationPatcher.Core.Factories;
 using WpfApplicationPatcher.Core.Types;
 using WpfApplicationPatcher.Core.Types.MonoCecil;
 using WpfApplicationPatcher.Core.Types.Reflection;
+using WpfApplicationPatcher.Tests.Fake;
 
 namespace WpfApplicationPatcher.Tests.Unit {
 	[TestFixture]
@@ -25,7 +26,7 @@ namespace WpfApplicationPatcher.Tests.Unit {
 			monoCecilAssemblyFactory.Setup(factory => factory.Save(monoCecilAssembly.Object, assemblyPath));
 
 			var commonAssemblyContainerFactory = new Mock<CommonAssemblyContainerFactory>(MockBehavior.Strict);
-			var commonAssemblyContainer = new CommonTypeContainer(new[] { new FakeCommonTypeBuilder("ViewModel", typeof(ViewModelBase)).Build() });
+			var commonAssemblyContainer = new CommonTypeContainer(new[] { FakeCommonTypeBuilder.Create(typeof(ViewModelBase)).Build() });
 			commonAssemblyContainerFactory
 				.Setup(factory => factory.Create(reflectionAssembly.Object, monoCecilAssembly.Object))
 				.Returns(() => commonAssemblyContainer);

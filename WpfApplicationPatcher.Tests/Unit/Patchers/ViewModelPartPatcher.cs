@@ -2,18 +2,19 @@
 using GalaSoft.MvvmLight;
 using Moq;
 using NUnit.Framework;
+using WpfApplicationPatcher.Core.Helpers;
 using WpfApplicationPatcher.Core.Types;
 using WpfApplicationPatcher.Core.Types.Common;
 using WpfApplicationPatcher.Core.Types.MonoCecil;
 using WpfApplicationPatcher.Patchers;
-using WpfApplicationPatcher.Patchers.ViewModelPartPatchers;
 using WpfApplicationPatcher.Tests.Fake;
+using WpfApplicationPatcher.Tests.Fake.Types;
 using WpfApplicationPatcher.Types.Attributes.ViewModels;
 using WpfApplicationPatcher.Types.Enums;
 
 namespace WpfApplicationPatcher.Tests.Unit.Patchers {
 	[TestFixture]
-	public class ViewModelPatcherTest : PatcherTestBase {
+	public class ViewModelPartPatcher : ViewModelPartPatcherBase {
 		[Test]
 		public void AllEmpty() {
 			var viewModelPatcher = new ViewModelPatcher(Enumerable.Empty<IViewModelPartPatcher>().ToArray());
@@ -23,7 +24,7 @@ namespace WpfApplicationPatcher.Tests.Unit.Patchers {
 		[Test]
 		public void ViewModelPartPatchersEmpty() {
 			var viewModelPatcher = new ViewModelPatcher(Enumerable.Empty<IViewModelPartPatcher>().ToArray());
-			var viewModel = new FakeCommonTypeBuilder("ViewModel", typeof(ViewModelBase)).WhereFrom(MonoCecilModule.Object).Build();
+			var viewModel = FakeCommonTypeBuilder.Create("ViewModel", typeof(ViewModelBase)).WhereFrom(MonoCecilModule.Object).Build();
 
 			viewModelPatcher.Patch(MonoCecilAssembly.Object, new CommonTypeContainer(new[] { ViewModelBase, viewModel }));
 		}
@@ -32,7 +33,7 @@ namespace WpfApplicationPatcher.Tests.Unit.Patchers {
 		public void OnePartPatcher() {
 			var viewModelPartPatcher = new Mock<IViewModelPartPatcher>();
 			var viewModelPatcher = new ViewModelPatcher(new[] { viewModelPartPatcher.Object });
-			var viewModel = new FakeCommonTypeBuilder("ViewModel", typeof(ViewModelBase)).WhereFrom(MonoCecilModule.Object).Build();
+			var viewModel = FakeCommonTypeBuilder.Create("ViewModel", typeof(ViewModelBase)).WhereFrom(MonoCecilModule.Object).Build();
 
 			viewModelPatcher.Patch(MonoCecilAssembly.Object, new CommonTypeContainer(new[] { ViewModelBase, viewModel }));
 
@@ -50,7 +51,7 @@ namespace WpfApplicationPatcher.Tests.Unit.Patchers {
 			var viewModelPartPatchers = Enumerable.Range(0, partPatcherCount).Select(x => new Mock<IViewModelPartPatcher>()).ToArray();
 			var viewModelPatcher = new ViewModelPatcher(viewModelPartPatchers.Select(patcher => patcher.Object).ToArray());
 			var viewModels = Enumerable.Range(0, viewModelCount)
-				.Select(x => new FakeCommonTypeBuilder($"ViewModel{x + 1}", typeof(ViewModelBase)).WhereFrom(MonoCecilModule.Object).Build())
+				.Select(x => FakeCommonTypeBuilder.Create($"ViewModel{x + 1}", typeof(ViewModelBase)).WhereFrom(MonoCecilModule.Object).Build())
 				.ToArray();
 
 			viewModelPatcher.Patch(MonoCecilAssembly.Object, new CommonTypeContainer(new[] { ViewModelBase }.Concat(viewModels).ToArray()));
@@ -68,10 +69,10 @@ namespace WpfApplicationPatcher.Tests.Unit.Patchers {
 		public void ViewModelsFromNotCurrentModule() {
 			var viewModelPartPatcher = new Mock<IViewModelPartPatcher>();
 			var viewModelPatcher = new ViewModelPatcher(new[] { viewModelPartPatcher.Object });
-			var viewModel1 = new FakeCommonTypeBuilder("ViewModel1", typeof(ViewModelBase)).WhereFrom(MonoCecilModule.Object).Build();
-			var viewModel2 = new FakeCommonTypeBuilder("ViewModel2", typeof(ViewModelBase)).Build();
-			var viewModel3 = new FakeCommonTypeBuilder("ViewModel3", typeof(ViewModelBase)).WhereFrom(MonoCecilModule.Object).Build();
-			var viewModel4 = new FakeCommonTypeBuilder("ViewModel4", typeof(ViewModelBase)).Build();
+			var viewModel1 = FakeCommonTypeBuilder.Create("ViewModel1", typeof(ViewModelBase)).WhereFrom(MonoCecilModule.Object).Build();
+			var viewModel2 = FakeCommonTypeBuilder.Create("ViewModel2", typeof(ViewModelBase)).Build();
+			var viewModel3 = FakeCommonTypeBuilder.Create("ViewModel3", typeof(ViewModelBase)).WhereFrom(MonoCecilModule.Object).Build();
+			var viewModel4 = FakeCommonTypeBuilder.Create("ViewModel4", typeof(ViewModelBase)).Build();
 
 			viewModelPatcher.Patch(MonoCecilAssembly.Object, new CommonTypeContainer(new[] { ViewModelBase, viewModel1, viewModel2, viewModel3, viewModel4 }));
 
@@ -87,7 +88,7 @@ namespace WpfApplicationPatcher.Tests.Unit.Patchers {
 		public void ViewModelWithPatchingType() {
 			var viewModelPartPatcher = new Mock<IViewModelPartPatcher>();
 			var viewModelPatcher = new ViewModelPatcher(new[] { viewModelPartPatcher.Object });
-			var viewModel = new FakeCommonTypeBuilder("ViewModel", typeof(ViewModelBase))
+			var viewModel = FakeCommonTypeBuilder.Create("ViewModel", typeof(ViewModelBase))
 				.AddAttribute(new FakeAttribute(new PatchingViewModelAttribute(ViewModelPatchingType.Selectively)))
 				.WhereFrom(MonoCecilModule.Object)
 				.Build();
@@ -104,18 +105,18 @@ namespace WpfApplicationPatcher.Tests.Unit.Patchers {
 		public void ManyViewModelsWithPatchingTypes() {
 			var viewModelPartPatcher = new Mock<IViewModelPartPatcher>();
 			var viewModelPatcher = new ViewModelPatcher(new[] { viewModelPartPatcher.Object });
-			var viewModel1 = new FakeCommonTypeBuilder("ViewModel1", typeof(ViewModelBase))
+			var viewModel1 = FakeCommonTypeBuilder.Create("ViewModel1", typeof(ViewModelBase))
 				.AddAttribute(new FakeAttribute(new PatchingViewModelAttribute(ViewModelPatchingType.Selectively)))
 				.WhereFrom(MonoCecilModule.Object)
 				.Build();
-			var viewModel2 = new FakeCommonTypeBuilder("ViewModel2", typeof(ViewModelBase))
+			var viewModel2 = FakeCommonTypeBuilder.Create("ViewModel2", typeof(ViewModelBase))
 				.AddAttribute(new FakeAttribute(new PatchingViewModelAttribute()))
 				.WhereFrom(MonoCecilModule.Object)
 				.Build();
-			var viewModel3 = new FakeCommonTypeBuilder("ViewModel2", typeof(ViewModelBase))
+			var viewModel3 = FakeCommonTypeBuilder.Create("ViewModel2", typeof(ViewModelBase))
 				.WhereFrom(MonoCecilModule.Object)
 				.Build();
-			var viewModel4 = new FakeCommonTypeBuilder("ViewModel3", typeof(ViewModelBase))
+			var viewModel4 = FakeCommonTypeBuilder.Create("ViewModel3", typeof(ViewModelBase))
 				.AddAttribute(new FakeAttribute(new PatchingViewModelAttribute(ViewModelPatchingType.Selectively)))
 				.Build();
 

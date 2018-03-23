@@ -95,11 +95,11 @@ namespace WpfApplicationPatcher.Core.Helpers {
 			var stackTrace = new StackTrace();
 			var offset = (stackTrace.GetFrames() ?? throw new Exception())
 				.Select(frame => frame.GetMethod())
-				.Where(method =>
-					method.DeclaringType != typeof(Log) &&
+				.Count(method => method.DeclaringType != typeof(Log) &&
 					method.DeclaringType?.FullName?.StartsWith("System") == false &&
-					method.DeclaringType?.FullName?.StartsWith("NUnit") == false)
-				.Count(method => method.GetCustomAttribute<DoNotAddLogOffsetAttribute>() == null);
+					method.DeclaringType?.FullName?.StartsWith("NUnit") == false &&
+					method.DeclaringType?.FullName?.StartsWith("FluentAssertions") == false &&
+					method.GetCustomAttribute<DoNotAddLogOffsetAttribute>() == null);
 
 			OffsetString = new string('\t', offset - 1);
 			logger.Log(stackTrace.GetFrame(0).GetMethod().DeclaringType, level, message?.Invoke(), exception);

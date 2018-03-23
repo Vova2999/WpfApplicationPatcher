@@ -7,9 +7,10 @@ using WpfApplicationPatcher.Core.Factories;
 using WpfApplicationPatcher.Core.Types.Common;
 using WpfApplicationPatcher.Core.Types.MonoCecil;
 using WpfApplicationPatcher.Tests.Fake;
+using WpfApplicationPatcher.Tests.Fake.Types;
 
 namespace WpfApplicationPatcher.Tests.Unit.Patchers {
-	public abstract class PatcherTestBase {
+	public abstract class ViewModelPartPatcherBase {
 		protected Mock<MonoCecilAssembly> MonoCecilAssembly;
 		protected Mock<MonoCecilFactory> MonoCecilFactory;
 		protected Mock<MonoCecilModule> MonoCecilModule;
@@ -42,7 +43,7 @@ namespace WpfApplicationPatcher.Tests.Unit.Patchers {
 				.Setup(factory => factory.CreateInstruction(It.IsAny<OpCode>(), It.IsAny<MonoCecilMethodReference>()))
 				.Returns(() => new Mock<MonoCecilInstruction>(null).Object);
 
-			ViewModelBase = new FakeCommonTypeBuilder(typeof(ViewModelBase))
+			ViewModelBase = FakeCommonTypeBuilder.Create(typeof(ViewModelBase))
 				.AddMethod(new FakeMethod {
 					Name = "Set",
 					Parameters = new[] {

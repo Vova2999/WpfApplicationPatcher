@@ -1,4 +1,4 @@
-namespace WpfApplicationPatcher.Tests.Fake {
+namespace WpfApplicationPatcher.Tests.Fake.Types {
 	public class FakeProperty {
 		public string Name { get; set; }
 		public FakeMethod GetMethod { get; set; }

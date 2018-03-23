@@ -1,6 +1,6 @@
 using System;
 
-namespace WpfApplicationPatcher.Tests.Fake {
+namespace WpfApplicationPatcher.Tests.Fake.Types {
 	public class FakeType {
 		public readonly Type Type;
 		public readonly string Name;

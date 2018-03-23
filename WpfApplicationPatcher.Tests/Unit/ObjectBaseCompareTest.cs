@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using FluentAssertions;
-using Moq;
 using NUnit.Framework;
 using WpfApplicationPatcher.Core.Types.Reflection;
 
@@ -14,14 +12,10 @@ namespace WpfApplicationPatcher.Tests.Unit {
 
 		private static readonly TestReflectionType firstNull = new TestReflectionType(nullName, null);
 		private static readonly TestReflectionType secondNull = new TestReflectionType(nullName, null);
-		private static readonly TestReflectionType firstNotNull = new TestReflectionType(notNullName, CreateReflectionType(typeof(ObjectBaseCompareTest)));
-		private static readonly TestReflectionType secondNotNull = new TestReflectionType(notNullName, CreateReflectionType(typeof(ObjectBaseCompareTest)));
-		private static readonly TestReflectionType firstWithNull = new TestReflectionType(withNullName, CreateReflectionType(null));
-		private static readonly TestReflectionType secondWithNull = new TestReflectionType(withNullName, CreateReflectionType(null));
-
-		private static ReflectionType CreateReflectionType(Type type) {
-			return new Mock<ReflectionType>(type) { CallBase = true }.Object;
-		}
+		private static readonly TestReflectionType firstNotNull = new TestReflectionType(notNullName, new ReflectionType(typeof(ObjectBaseCompareTest)));
+		private static readonly TestReflectionType secondNotNull = new TestReflectionType(notNullName, new ReflectionType(typeof(ObjectBaseCompareTest)));
+		private static readonly TestReflectionType firstWithNull = new TestReflectionType(withNullName, new ReflectionType(null));
+		private static readonly TestReflectionType secondWithNull = new TestReflectionType(withNullName, new ReflectionType(null));
 
 		[Test, TestCaseSource(nameof(CompareTestCaseSource), new object[] { true })]
 		public void EqualityCompareTest(ReflectionType left, ReflectionType right, bool expectedResult) {
