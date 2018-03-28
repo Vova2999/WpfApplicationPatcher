@@ -2,11 +2,10 @@
 using GalaSoft.MvvmLight;
 using Moq;
 using NUnit.Framework;
-using WpfApplicationPatcher.Core.Helpers;
 using WpfApplicationPatcher.Core.Types;
 using WpfApplicationPatcher.Core.Types.Common;
 using WpfApplicationPatcher.Core.Types.MonoCecil;
-using WpfApplicationPatcher.Patchers;
+using WpfApplicationPatcher.Patchers.ViewModel;
 using WpfApplicationPatcher.Tests.Fake;
 using WpfApplicationPatcher.Tests.Fake.Types;
 using WpfApplicationPatcher.Types.Attributes.ViewModels;

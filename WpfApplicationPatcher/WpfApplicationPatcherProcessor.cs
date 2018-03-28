@@ -2,6 +2,7 @@
 using WpfApplicationPatcher.Core.Extensions;
 using WpfApplicationPatcher.Core.Factories;
 using WpfApplicationPatcher.Core.Helpers;
+using WpfApplicationPatcher.Patchers;
 
 namespace WpfApplicationPatcher {
 	public class WpfApplicationPatcherProcessor {

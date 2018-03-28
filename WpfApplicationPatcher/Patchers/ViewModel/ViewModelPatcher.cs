@@ -7,7 +7,7 @@ using WpfApplicationPatcher.Core.Types.MonoCecil;
 using WpfApplicationPatcher.Types.Attributes.ViewModels;
 using WpfApplicationPatcher.Types.Enums;
 
-namespace WpfApplicationPatcher.Patchers {
+namespace WpfApplicationPatcher.Patchers.ViewModel {
 	public class ViewModelPatcher : IPatcher {
 		private readonly IViewModelPartPatcher[] viewModelPartPatchers;
 		private readonly Log log;
@@ -38,7 +38,7 @@ namespace WpfApplicationPatcher.Patchers {
 				var viewModelPatchingType = patchingViewModelAttribute?.ViewModelPatchingType ?? ViewModelPatchingType.All;
 				log.Info($"View model patching type: {viewModelPatchingType}");
 
-				viewModelPartPatchers.ForEach(viewModelPatcher => viewModelPatcher.Patch(monoCecilAssembly, viewModelBase, viewModel, viewModelPatchingType));
+				viewModelPartPatchers.ForEach(viewModelPartPatcher => viewModelPartPatcher.Patch(monoCecilAssembly, viewModelBase, viewModel, viewModelPatchingType));
 				log.Info($"{viewModel.FullName} was patched");
 			}
 

@@ -21,10 +21,7 @@ namespace WpfApplicationPatcher.Core.Factories {
 		}
 
 		private static void AddType(List<MonoCecilType> types, MonoCecilType currentType) {
-			while (currentType != null) {
-				if (types.Contains(currentType))
-					break;
-
+			while (currentType != null && !types.Contains(currentType)) {
 				types.Add(currentType);
 				currentType = currentType.BaseType?.Resolve();
 			}

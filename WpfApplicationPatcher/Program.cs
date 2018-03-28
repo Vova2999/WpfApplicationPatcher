@@ -21,11 +21,11 @@ namespace WpfApplicationPatcher {
 		[DoNotAddLogOffset]
 		private static void Run(string[] args) {
 			if (!args.Any())
-				throw new ArgumentException("You must specify path to wpf application");
+				throw new FileNotFoundException("You must specify path to wpf application");
 
 			var wpfApplicationPath = args.FirstOrDefault();
 			if (string.IsNullOrEmpty(wpfApplicationPath))
-				throw new ArgumentException("Path to wpf application can not be empty");
+				throw new FileNotFoundException("Path to wpf application can not be empty");
 
 			var availableExtensions = new[] { ".exe", ".dll" };
 			var wpfApplicationExtension = Path.GetExtension(wpfApplicationPath);
@@ -33,9 +33,13 @@ namespace WpfApplicationPatcher {
 				throw new ArgumentException($"Extension of wpf application can not be '{wpfApplicationExtension}'. " +
 					$"Available extensions: {string.Join(", ", availableExtensions.Select(availableExtension => $"'{availableExtension}'"))}");
 
-			log.Info("Application was found");
+			var wpfApplicationFullPath = Path.GetFullPath(wpfApplicationPath);
+			if (!File.Exists(wpfApplicationPath))
+				throw new FileNotFoundException($"Not found wpf application: {wpfApplicationFullPath}");
 
-			var currentDirectory = Path.GetDirectoryName(Path.GetFullPath(wpfApplicationPath));
+			log.Info($"Application was found: {wpfApplicationFullPath}");
+
+			var currentDirectory = Path.GetDirectoryName(wpfApplicationFullPath);
 			log.Info($"Current directory: {currentDirectory}");
 			Directory.SetCurrentDirectory(currentDirectory ?? throw new Exception());
 

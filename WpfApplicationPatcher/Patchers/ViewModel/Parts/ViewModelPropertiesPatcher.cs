@@ -9,17 +9,12 @@ using WpfApplicationPatcher.Core.Factories;
 using WpfApplicationPatcher.Core.Helpers;
 using WpfApplicationPatcher.Core.Types.Common;
 using WpfApplicationPatcher.Core.Types.MonoCecil;
+using WpfApplicationPatcher.Exceptions;
 using WpfApplicationPatcher.Types.Attributes.Properties;
 using WpfApplicationPatcher.Types.Enums;
 
-namespace WpfApplicationPatcher.Patchers.ViewModelPartPatchers {
+namespace WpfApplicationPatcher.Patchers.ViewModel.Parts {
 	public class ViewModelPropertiesPatcher : IViewModelPartPatcher {
-		private const string internalErrorOfPropertyPatchingErrorMessage = "Internal error of property patching";
-		private const string propertyHaveCommandTypeErrorMessage = "Patching property type cannot be inherited from ICommand";
-		private const string propertyNameStartsWithInLowerCaseErrorMessage = "First character of property name must be to upper case";
-		private const string propertyGetMethodMissingErrorMessage = "Patching property must have get method accessor";
-		private const string propertySetMethodMissingErrorMessage = "Patching property must have set method accessor";
-
 		private readonly MonoCecilFactory monoCecilFactory;
 		private readonly Log log;
 
@@ -94,15 +89,19 @@ namespace WpfApplicationPatcher.Patchers.ViewModelPartPatchers {
 		[DoNotAddLogOffset]
 		private void CheckProperty(CommonProperty property) {
 			if (property.Is(typeof(ICommand))) {
+				const string propertyHaveCommandTypeErrorMessage = "Patching property type cannot be inherited from ICommand";
+
 				log.Error(propertyHaveCommandTypeErrorMessage);
-				throw new Exception(internalErrorOfPropertyPatchingErrorMessage, new Exception(propertyHaveCommandTypeErrorMessage));
+				throw new PropertyPatchingException(propertyHaveCommandTypeErrorMessage, property.FullName);
 			}
 
 			if (char.IsUpper(property.MonoCecilProperty.Name.First()))
 				return;
 
+			const string propertyNameStartsWithInLowerCaseErrorMessage = "First character of property name must be to upper case";
+
 			log.Error(propertyNameStartsWithInLowerCaseErrorMessage);
-			throw new Exception(internalErrorOfPropertyPatchingErrorMessage, new Exception(propertyNameStartsWithInLowerCaseErrorMessage));
+			throw new PropertyPatchingException(propertyNameStartsWithInLowerCaseErrorMessage, property.FullName);
 		}
 
 		[DoNotAddLogOffset]
@@ -110,8 +109,10 @@ namespace WpfApplicationPatcher.Patchers.ViewModelPartPatchers {
 			log.Info("Generate get method body...");
 			var propertyGetMethod = property.GetMethod;
 			if (propertyGetMethod == null) {
+				const string propertyGetMethodMissingErrorMessage = "Patching property must have get method accessor";
+
 				log.Error(propertyGetMethodMissingErrorMessage);
-				throw new Exception(internalErrorOfPropertyPatchingErrorMessage, new Exception(propertyGetMethodMissingErrorMessage));
+				throw new PropertyPatchingException(propertyGetMethodMissingErrorMessage, property.FullName);
 			}
 
 			var getMethodBodyInstructions = propertyGetMethod.Body.Instructions;
@@ -119,7 +120,7 @@ namespace WpfApplicationPatcher.Patchers.ViewModelPartPatchers {
 			getMethodBodyInstructions.Add(monoCecilFactory.CreateInstruction(OpCodes.Ldarg_0));
 			getMethodBodyInstructions.Add(monoCecilFactory.CreateInstruction(OpCodes.Ldfld, backgroundField));
 			getMethodBodyInstructions.Add(monoCecilFactory.CreateInstruction(OpCodes.Ret));
-			propertyGetMethod.RemoveAttribute(typeof(CompilerGeneratedAttribute).FullName);
+			propertyGetMethod.RemoveAttribute(typeof(CompilerGeneratedAttribute));
 			log.Info("Get method body was generated");
 		}
 
@@ -128,8 +129,10 @@ namespace WpfApplicationPatcher.Patchers.ViewModelPartPatchers {
 			log.Info("Generate method reference on Set method in ViewModelBase...");
 			var propertySetMethod = property.SetMethod;
 			if (propertySetMethod == null) {
+				const string propertySetMethodMissingErrorMessage = "Patching property must have set method accessor";
+
 				log.Error(propertySetMethodMissingErrorMessage);
-				throw new Exception(internalErrorOfPropertyPatchingErrorMessage, new Exception(propertySetMethodMissingErrorMessage));
+				throw new PropertyPatchingException(propertySetMethodMissingErrorMessage, property.FullName);
 			}
 
 			var setMethodFromViewModelBase = monoCecilFactory.CreateGenericInstanceMethod(GetSetMethodFromViewModelBase(viewModelBase.MonoCecilType));
@@ -148,7 +151,7 @@ namespace WpfApplicationPatcher.Patchers.ViewModelPartPatchers {
 			setMethodBodyInstructions.Add(monoCecilFactory.CreateInstruction(OpCodes.Call, setMethodInViewModelBaseWithGenericParameter));
 			setMethodBodyInstructions.Add(monoCecilFactory.CreateInstruction(OpCodes.Pop));
 			setMethodBodyInstructions.Add(monoCecilFactory.CreateInstruction(OpCodes.Ret));
-			propertySetMethod.RemoveAttribute(typeof(CompilerGeneratedAttribute).FullName);
+			propertySetMethod.RemoveAttribute(typeof(CompilerGeneratedAttribute));
 			log.Info("Set method body was generated");
 		}
 

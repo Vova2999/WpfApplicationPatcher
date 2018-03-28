@@ -6,6 +6,7 @@ using WpfApplicationPatcher.Core.Factories;
 using WpfApplicationPatcher.Core.Types;
 using WpfApplicationPatcher.Core.Types.MonoCecil;
 using WpfApplicationPatcher.Core.Types.Reflection;
+using WpfApplicationPatcher.Patchers;
 using WpfApplicationPatcher.Tests.Fake;
 
 namespace WpfApplicationPatcher.Tests.Unit {

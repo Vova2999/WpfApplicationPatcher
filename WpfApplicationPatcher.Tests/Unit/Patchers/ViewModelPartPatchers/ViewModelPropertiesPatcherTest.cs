@@ -5,7 +5,7 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using NUnit.Framework;
 using WpfApplicationPatcher.Core.Helpers;
-using WpfApplicationPatcher.Patchers.ViewModelPartPatchers;
+using WpfApplicationPatcher.Patchers.ViewModel.Parts;
 using WpfApplicationPatcher.Tests.Fake;
 using WpfApplicationPatcher.Tests.Fake.Types;
 using WpfApplicationPatcher.Types.Attributes.Properties;

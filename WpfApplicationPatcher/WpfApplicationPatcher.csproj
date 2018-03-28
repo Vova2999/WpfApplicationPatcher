@@ -81,11 +81,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IPatcher.cs" />
-    <Compile Include="Patchers\ViewModelPatcher.cs" />
-    <Compile Include="Patchers\IViewModelPartPatcher.cs" />
-    <Compile Include="Patchers\ViewModelPartPatchers\ViewModelCommandsPatcher.cs" />
-    <Compile Include="Patchers\ViewModelPartPatchers\ViewModelPropertiesPatcher.cs" />
+    <Compile Include="Exceptions\PropertyPatchingException.cs" />
+    <Compile Include="Patchers\IPatcher.cs" />
+    <Compile Include="Patchers\ViewModel\ViewModelPatcher.cs" />
+    <Compile Include="Patchers\ViewModel\IViewModelPartPatcher.cs" />
+    <Compile Include="Patchers\ViewModel\Parts\ViewModelCommandsPatcher.cs" />
+    <Compile Include="Patchers\ViewModel\Parts\ViewModelPropertiesPatcher.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WpfApplicationPatcherNinjectModule.cs" />

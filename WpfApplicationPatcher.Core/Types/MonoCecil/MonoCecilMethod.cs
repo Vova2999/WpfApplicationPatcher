@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Mono.Cecil;
 using WpfApplicationPatcher.Core.Extensions;
@@ -17,6 +18,10 @@ namespace WpfApplicationPatcher.Core.Types.MonoCecil {
 
 		public override MonoCecilParameter GetParameterByIndex(int index) {
 			return Instance.Parameters[index].ToMonoCecilParameter();
+		}
+
+		public virtual void RemoveAttribute(Type attributeType) {
+			RemoveAttribute(attributeType.FullName);
 		}
 
 		public virtual void RemoveAttribute(string attributeFullName) {
