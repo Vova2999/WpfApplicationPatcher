@@ -59,6 +59,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Extensions\CommonAttributeExtensions.cs" />
+    <Compile Include="Extensions\CommonMethodExtensions.cs" />
     <Compile Include="Extensions\CommonPropertyExtensions.cs" />
     <Compile Include="Extensions\CommonTypeExtensions.cs" />
     <Compile Include="Extensions\EnumerableExtensions.cs" />

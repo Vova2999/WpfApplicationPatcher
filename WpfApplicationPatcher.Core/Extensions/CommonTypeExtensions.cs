@@ -8,12 +8,12 @@ namespace WpfApplicationPatcher.Core.Extensions {
 	// ReSharper disable UnusedMember.Global
 
 	public static class CommonTypeExtensions {
-		public static bool Is(this CommonType commonType, Type type) {
+		public static bool IsInheritedFrom(this CommonType commonType, Type type) {
 			return type.IsAssignableFrom(commonType.ReflectionType.Instance);
 		}
 
-		public static bool IsNot(this CommonType commonType, Type type) {
-			return !commonType.Is(type);
+		public static bool IsNotInheritedFrom(this CommonType commonType, Type type) {
+			return !commonType.IsInheritedFrom(type);
 		}
 
 		public static TAttribute GetReflectionAttribute<TAttribute>(this CommonType commonType) where TAttribute : Attribute {

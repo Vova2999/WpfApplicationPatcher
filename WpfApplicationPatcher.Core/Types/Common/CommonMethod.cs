@@ -5,6 +5,7 @@ namespace WpfApplicationPatcher.Core.Types.Common {
 	public class CommonMethod {
 		public string Name => MonoCecilMethod.Name;
 		public string FullName => MonoCecilMethod.FullName;
+		public bool IsPublic => ReflectionMethod.IsPublic;
 		public readonly CommonAttribute[] Attributes;
 		public readonly MonoCecilMethod MonoCecilMethod;
 		public readonly ReflectionMethod ReflectionMethod;

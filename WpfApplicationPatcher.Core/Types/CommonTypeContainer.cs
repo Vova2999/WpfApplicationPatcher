@@ -19,7 +19,7 @@ namespace WpfApplicationPatcher.Core.Types {
 		}
 
 		public IEnumerable<CommonType> GetInheritanceCommonTypes(Type type) {
-			return commonTypes?.Where(commonType => commonType.Is(type));
+			return commonTypes?.Where(commonType => commonType.IsInheritedFrom(type));
 		}
 	}
 }

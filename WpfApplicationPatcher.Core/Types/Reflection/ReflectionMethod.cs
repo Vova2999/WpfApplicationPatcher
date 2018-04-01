@@ -10,6 +10,7 @@ namespace WpfApplicationPatcher.Core.Types.Reflection {
 		public override string FullName => GetOrCreate(() => Instance.DeclaringType == null ? Name : $"{Instance.DeclaringType?.FullName}.{Name}");
 		public override IEnumerable<ReflectionParameter> Parameters => GetOrCreate(() => Instance.GetParameters().ToReflectionParameters().ToArray());
 		public override IEnumerable<ReflectionAttribute> Attributes => GetOrCreate(() => Instance.GetCustomAttributes().ToReflectionAttributes());
+		public virtual bool IsPublic => GetOrCreate(() => Instance.IsPublic);
 
 		internal ReflectionMethod(MethodInfo instance) : base(instance) {
 		}
